@@ -1,0 +1,8 @@
+---
+##
+# Verifies that Jenkins is correctly installed and running on the system 
+# running this test.
+##
+- hosts: localhost
+  tasks:
+    #- wait_for: host=localhost port=8080 timeout=60 state=present search_regex=Welcome to Jenkins

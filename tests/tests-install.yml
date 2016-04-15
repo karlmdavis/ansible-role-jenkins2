@@ -1,0 +1,14 @@
+---
+##
+# Installs Jenkins on the system running this test. Then, calls 
+# tests-verify.yml to verify that Jenkins is running as expected.
+##
+
+- hosts: localhost
+  vars:
+    java_packages: ["oracle-java8-installer"]
+  roles:
+    - geerlingguy.java
+    - ansible-role-jenkins
+
+- include: tests-verify.yml
