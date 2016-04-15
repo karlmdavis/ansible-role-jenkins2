@@ -1,27 +1,21 @@
 galaxy_info:
-  author: your name
-  description: 
-  company: your company (optional)
+  author: Karl M. Davis
+  description: This Ansible role can be used to install and manage Jenkins 2.
+  company: HHS IDEA Lab
   
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
   # issue_tracker_url: http://example.com/issue/tracker
   
-  # Some suggested licenses:
-  # - BSD (default)
-  # - MIT
-  # - GPLv2
-  # - GPLv3
-  # - Apache
-  # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  # See LICENSE.md and CONTRIBUTING.md
+  license: CC0
   
-  min_ansible_version: 1.2
+  min_ansible_version: 2.0
 
   # Optionally specify the branch Galaxy will use when accessing the GitHub
   # repo for this role. During role install, if no tags are available,
   # Galaxy will use this branch. During import Galaxy will access files on
-  # this branch. If travis integration is cofigured, only notification for this
+  # this branch. If travis integration is configured, only notification for this
   # branch will be accepted. Otherwise, in all cases, the repo's default branch
   # (usually master) will be used.
   #github_branch:
@@ -31,7 +25,7 @@ galaxy_info:
   # the ones that apply to your role. If you don't see your
   # platform on this list, let us know and we'll get it added!
   #
-  #platforms:
+  platforms:
   #- name: EL
   #  versions:
   #  - all
@@ -114,8 +108,8 @@ galaxy_info:
   #  - 9.1
   #  - 9.2
   #  - 9.3
-  #- name: Ubuntu
-  #  versions:
+  - name: Ubuntu
+    versions:
   #  - all
   #  - lucid
   #  - maverick
@@ -125,7 +119,7 @@ galaxy_info:
   #  - quantal
   #  - raring
   #  - saucy
-  #  - trusty
+    - trusty
   #  - utopic
   #  - vivid
   #  - wily
@@ -158,7 +152,7 @@ galaxy_info:
   #  - stretch
   #  - wheezy
   
-  galaxy_tags: []
+  galaxy_tags:
     # List tags for your role here, one per line. A tag is
     # a keyword that describes and categorizes the role.
     # Users find roles by searching for tags. Be sure to
@@ -166,6 +160,12 @@ galaxy_info:
     #
     # NOTE: A tag is limited to a single word comprised of
     # alphanumeric characters. Maximum 20 tags per role.
+    - development
+    - Jenkins
+    - CI
+    - ContinuousIntegration
+    - CD
+    - ContinuousDelivery
 
 dependencies: []
   # List your role dependencies here, one per line.
