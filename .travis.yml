@@ -19,7 +19,7 @@ addons:
 
 install:
   # Install Ansible and other required Python libraries.
-  - pip install --user -r tests/requirements.txt
+  - pip install -r tests/requirements.txt
 
   # Check ansible version
   - ansible --version
