@@ -8,8 +8,9 @@
 language: python
 python: "2.7"
 
-# Use the new container infrastructure
-sudo: false
+# Use a full VM (rather than a sudo-less container), as we need sudo access to
+# test this Ansible role.
+sudo: required
 
 # Install ansible
 addons:
