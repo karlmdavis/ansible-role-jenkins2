@@ -32,8 +32,8 @@
 # disables the Jenkins CLI until the user has completed it.
 - name: Configure JVM Arguments
   lineinfile:
-  dest: /etc/default/jenkins
-  regexp: '^JAVA_ARGS='
-  line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    dest: /etc/default/jenkins
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
   notify:
     - "Restart Service 'jenkins'"
