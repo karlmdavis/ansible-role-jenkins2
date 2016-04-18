@@ -8,23 +8,23 @@
 # That will also install the dependencies automagically.
 ##
 
-- name: Install OS Dependencies (Debian)
+- name: Install OS Dependencies
   apt: name={{ item }} state=installed
   with_items:
    - daemon
 
-- name: Check for Jenkins 2.0 for Debian
+- name: Check for Jenkins 2.0
   command: dpkg-query -W jenkins_2.0_all
   register: jenkins_deb_check
   failed_when: jenkins_deb_check.rc > 1
   changed_when: jenkins_deb_check.rc == 1
 
-- name: Download Jenkins 2.0 for Debian
+- name: Download Jenkins 2.0
   get_url: 
     url="http://pkg.jenkins-ci.org/debian-rc/binary/jenkins_2.0_all.deb"
     dest="/tmp/jenkins_2.0_all.deb"
   when: jenkins_deb_check.rc == 1
 
-- name: Install Jenkins 2.0 for Debian
+- name: Install Jenkins 2.0
   apt: deb="/tmp/jenkins_2.0_all.deb"
   when: jenkins_deb_check.rc == 1
