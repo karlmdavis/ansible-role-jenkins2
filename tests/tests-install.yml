@@ -9,6 +9,6 @@
     java_packages: ["oracle-java8-installer"]
   roles:
     - geerlingguy.java
-    - ansible-role-jenkins
+    - ansible-jenkins2
 
 - include: tests-verify.yml
