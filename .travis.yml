@@ -25,12 +25,11 @@ install:
   # Check ansible version
   - ansible --version
 
-  # Install the additional Ansible roles that are required for testing this one.
-  - sudo ansible-galaxy install -r tests/install_roles.yml
-
   # Create ansible.cfg with correct roles_path
   - printf '[defaults]\nroles_path=../' >ansible.cfg
 
+  # Install the additional Ansible roles that are required for testing this one.
+  - ansible-galaxy install -r tests/install_roles.yml
 script:
   # Basic role syntax check
   - ansible-playbook tests/tests-install.yml -i tests/inventory --syntax-check
