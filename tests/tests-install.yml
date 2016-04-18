@@ -5,6 +5,10 @@
 ##
 
 - hosts: localhost
+  
+  # The "geerlingguy.java" role requires this, but doesn't declare it.
+  become: true
+  
   vars:
     java_packages: ["oracle-java8-installer"]
   roles:
