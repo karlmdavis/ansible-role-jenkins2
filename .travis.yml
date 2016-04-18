@@ -35,7 +35,7 @@ script:
   - ansible-playbook tests/tests-install.yml -i tests/inventory --syntax-check
 
   # Run the role/playbook.
-  - "ansible-playbook tests-install.yml -i tests/inventory --connection=local"
+  - "ansible-playbook tests/tests-install.yml -i tests/inventory --connection=local"
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
