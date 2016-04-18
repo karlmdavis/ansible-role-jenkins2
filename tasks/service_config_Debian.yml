@@ -6,7 +6,7 @@
   lineinfile:
     dest: /etc/default/jenkins
     regexp: =^HTTP_PORT= 
-    line: "HTTP_PORT={{ port }}"
+    line: "HTTP_PORT={{ jenkins_port }}"
   notify:
     - "Restart Service 'jenkins'"
 
@@ -14,8 +14,8 @@
   lineinfile:
     dest: /etc/default/jenkins
     regexp: ^PREFIX=
-    line: "PREFIX={{ prefix }}"
-  when: prefix is defined
+    line: "PREFIX={{ jenkins_context_path }}"
+  when: jenkins_context_path is defined
   notify:
     - "Restart Service 'jenkins'"
 

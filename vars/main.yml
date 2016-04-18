@@ -1,3 +1,10 @@
 ---
 # Variables in this file are automatically included into the role's context.
 # (Other files in this directory must be included via an `include_vars` task.)
+
+# Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
+jenkins_port: 8080
+
+# The context path that Jenkins will be hosted at, e.g. '/foo' in 
+# 'http://localhost:8080/foo'. Leave as '' to host at root path.
+jenkins_context_path: ''
