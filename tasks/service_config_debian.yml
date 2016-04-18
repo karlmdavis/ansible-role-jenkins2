@@ -1,0 +1,39 @@
+---
+# This file is not included by default. It can be included via a task:
+# include: "service_config_{{ ansible_os_family }}.yml"
+
+- name: Configure Port
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: =^HTTP_PORT= 
+    line: "HTTP_PORT={{ port }}"
+  notify:
+    - "Restart Service 'jenkins'"
+
+- name: Configure Context Path
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: ^PREFIX=
+    line: "PREFIX={{ prefix }}"
+  when: prefix is defined
+  notify:
+    - "Restart Service 'jenkins'"
+
+# This is required because the default args don't include the '--prefix' option.
+- name: Configure Command Line Arguments
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: '^JENKINS_ARGS='
+    line: 'JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --prefix=$PREFIX"'
+  notify:
+    - "Restart Service 'jenkins'"
+
+# This disables the new Out-Of-Box setup wizard. If not disabled, that wizard 
+# disables the Jenkins CLI until the user has completed it.
+- name: Configure JVM Arguments
+  lineinfile:
+  dest: /etc/default/jenkins
+  regexp: '^JAVA_ARGS='
+  line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  notify:
+    - "Restart Service 'jenkins'"

@@ -1,0 +1,30 @@
+---
+# This file is not included by default. It can be included via a task:
+# include: "packages_{{ ansible_os_family }}.yml"
+
+##
+# FIXME: Once Jenkins 2.0 is released, install all of this via their APT repo.
+# 
+# That will also install the dependencies automagically.
+##
+
+- name: Install OS Dependencies (Debian)
+  apt: name={{ item }} state=installed
+  with_items:
+   - daemon
+
+- name: Check for Jenkins 2.0 for Debian
+  command: dpkg-query -W jenkins_2.0_all
+  register: jenkins_deb_check
+  failed_when: jenkins_deb_check.rc > 1
+  changed_when: jenkins_deb_check.rc == 1
+
+- name: Download Jenkins 2.0 for Debian
+  get_url: 
+    url="http://pkg.jenkins-ci.org/debian-rc/binary/jenkins_2.0_all.deb"
+    dest="/tmp/jenkins_2.0_all.deb"
+  when: jenkins_deb_check.rc == 1
+
+- name: Install Jenkins 2.0 for Debian
+  apt: deb="/tmp/jenkins_2.0_all.deb"
+  when: jenkins_deb_check.rc == 1

@@ -5,4 +5,9 @@
 ##
 - hosts: localhost
   tasks:
-    #- wait_for: host=localhost port=8080 timeout=60 state=present search_regex=Welcome to Jenkins
+    - wait_for:
+        host: localhost
+        port: 8080
+        timeout: 60
+        state: present
+        search_regex: 'Jenkins ver. 2.0-rc-1'

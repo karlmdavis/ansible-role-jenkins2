@@ -30,6 +30,7 @@ install:
 
   # Install the additional Ansible roles that are required for testing this one.
   - ansible-galaxy install -r tests/install_roles.yml
+
 script:
   # Basic role syntax check
   - ansible-playbook tests/tests-install.yml -i tests/inventory --syntax-check

@@ -1,2 +1,15 @@
 ---
-# tasks file for ansible-jenkins2
+
+- include_vars: "{{ ansible_os_family }}.yml"
+
+# Install all OS packages (including Jenkins itself).
+- include: "packages_{{ ansible_os_family }}.yml
+
+# Configure the service's launch options.
+- include: "service_config_{{ ansible_os_family }}.yml
+
+- name: Ensure Service 'jenkins' Is Running
+  service:
+    name: jenkins
+    state: started
+    enabled: yes

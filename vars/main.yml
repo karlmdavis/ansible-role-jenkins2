@@ -1,2 +1,3 @@
 ---
-# vars file for ansible-jenkins2
+# Variables in this file are automatically included into the role's context.
+# (Other files in this directory must be included via an `include_vars` task.)
