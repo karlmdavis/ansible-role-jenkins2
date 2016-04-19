@@ -10,6 +10,7 @@
 
 - name: Install OS Dependencies
   apt: name={{ item }} state=installed
+  become: true
   with_items:
    - daemon
 
@@ -27,4 +28,5 @@
 
 - name: Install Jenkins 2.0
   apt: deb="/tmp/jenkins_2.0_all.deb"
+  become: true
   when: jenkins_deb_check.rc == 1

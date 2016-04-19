@@ -7,6 +7,7 @@
     dest: /etc/default/jenkins
     regexp: =^HTTP_PORT= 
     line: "HTTP_PORT={{ jenkins_port }}"
+  become: true
   notify:
     - "Restart Service 'jenkins'"
 
@@ -16,6 +17,7 @@
     regexp: ^PREFIX=
     line: "PREFIX={{ jenkins_context_path }}"
   when: jenkins_context_path is defined
+  become: true
   notify:
     - "Restart Service 'jenkins'"
 
@@ -25,15 +27,19 @@
     dest: /etc/default/jenkins
     regexp: '^JENKINS_ARGS='
     line: 'JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --prefix=$PREFIX"'
+  become: true
   notify:
     - "Restart Service 'jenkins'"
 
 # This disables the new Out-Of-Box setup wizard. If not disabled, that wizard 
-# disables the Jenkins CLI until the user has completed it.
+# disables the Jenkins CLI until the user has completed it. The auto-generated
+# password for the default 'admin' account will be written out to
+# /var/lib/jenkins/secrets/initialAdminPassword.
 - name: Configure JVM Arguments
   lineinfile:
     dest: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
     line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  become: true
   notify:
     - "Restart Service 'jenkins'"

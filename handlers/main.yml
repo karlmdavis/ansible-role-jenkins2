@@ -4,4 +4,4 @@
   service:
     name: jenkins
     state: restarted
-  become: yes
+  become: true
