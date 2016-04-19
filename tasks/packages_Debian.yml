@@ -12,7 +12,9 @@
   apt: name={{ item }} state=installed
   become: true
   with_items:
-   - daemon
+    - daemon
+    # The uri module requires httplib2, prior to Ansible 2.1.
+    - python-httplib2
 
 - name: Check for Jenkins 2.0
   command: dpkg-query -W jenkins_2.0_all

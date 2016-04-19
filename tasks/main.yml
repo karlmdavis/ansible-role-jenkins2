@@ -12,3 +12,12 @@
     state: started
     enabled: yes
   become: true
+
+- name: Grab Jenkins Web UI Content
+  uri:
+    url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}"
+  register: jenkins_ui
+
+- name: Verify Jenkins Web UI Content
+  action: fail
+  when: "'Jenkins ver. 2.0-rc-1' not in jenkins_ui.content"

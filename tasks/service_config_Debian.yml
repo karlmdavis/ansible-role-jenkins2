@@ -43,3 +43,8 @@
   become: true
   notify:
     - "Restart Service 'jenkins'"
+
+# Fire any pending restart handlers now. This is needed to ensure that any 
+# port or prefix changes are applied before the rest of the config, and to 
+# ensure that the first-run setup wizard is disabled.
+- meta: flush_handlers
