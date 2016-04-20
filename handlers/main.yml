@@ -1,4 +1,6 @@
 ---
 
 - name: Restart Service 'jenkins'
+  # This 'include' hack allows a single handler to run multiple tasks.
+  # Reference: https://github.com/ansible/ansible/issues/14270
   include: ../handlers/restart_service.yml
