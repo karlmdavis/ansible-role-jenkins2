@@ -16,7 +16,7 @@
       # By default, Jenkins 2 is set to require auth, so the only page we can grab 
       # without getting a 403 and redirect is the login page.
       uri:
-        url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/login"
+        url: "http://localhost:8080/login"
         return_content: true
       register: jenkins_ui
     
