@@ -3,11 +3,21 @@
 # Verifies that Jenkins is correctly installed and running on the system 
 # running this test.
 ##
-- hosts: localhost
-  tasks:
-    - wait_for:
-        host: localhost
-        port: 8080
-        timeout: 60
-        state: present
-        search_regex: 'Jenkins ver. 2.0-rc-1'
+- name: Ensure Service 'jenkins' Is Running
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+  become: true
+
+- name: Grab Jenkins Web UI Content
+  # By default, Jenkins 2 is set to require auth, so the only page we can grab 
+  # without getting a 403 and redirect is the login page.
+  uri:
+    url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/login"
+    return_content: true
+  register: jenkins_ui
+
+- name: Verify Jenkins Web UI Content
+  action: fail
+  when: jenkins_ui.content.find('Jenkins ver. 2') == -1
