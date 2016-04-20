@@ -1,0 +1,87 @@
+---
+# This file is not included by default. It can be included via a task:
+# include: "cli_config_{{ ansible_os_family }}.yml"
+
+# Enables the Jenkins CLI and configures the 'admin' account so that it can be
+# used to connect to the CLI.
+
+- name: Create Jenkins Init Script Directory
+  # Reference: https://wiki.jenkins-ci.org/display/JENKINS/Post-initialization+script
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+
+- name: Jenkins Script - Configure Slave Agent Port
+  template:
+    src: slaveAgentPort.groovy
+    dest: /var/lib/jenkins/init.groovy.d/slaveAgentPort.groovy
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+  notify:
+    - "Restart Service 'jenkins'"
+
+- name: Generate SSH Keys for jenkins Service Account
+  user:
+    name: jenkins
+    generate_ssh_key: yes
+  become: true
+
+- name: Read SSH Public Key for jenkins Service Account
+  shell: cat /var/lib/jenkins/.ssh/id_rsa.pub
+  become: true
+  changed_when: false
+  register: jenkins_user_ssh_public_file
+
+- name: Parse SSH Public Key for jenkins Service Account
+  set_fact: jenkins_user_ssh_public_key="{{ jenkins_user_ssh_public_file.stdout_lines[0] }}"
+
+- name: Jenkins Script - Configure SSH Keys for admin
+  template:
+    src: adminSshKeys.groovy
+    dest: /var/lib/jenkins/init.groovy.d/adminSshKeys.groovy
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+  notify:
+    - "Restart Service 'jenkins'"
+
+# Fire any pending restart handlers now, as all of the above tasks will not be
+# applied until Jenkins restarts, and are required in order for the CLI-using
+# tasks below to work.
+- meta: flush_handlers
+
+- name: Create Jenkins CLI Directory
+  file:
+    path: /opt/jenkins
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+
+# The CLI comes "baked in" to the Jenkins WAR. Easiest way to extract it is 
+# just to download it.
+- name: Get Jenkins CLI
+  get_url:
+    url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/jnlpJars/jenkins-cli.jar"
+    dest: /opt/jenkins/jenkins-cli.jar
+    owner: jenkins
+    group: jenkins
+    mode: 0444
+  become: true
+
+- name: Verify CLI
+  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} who-am-i"
+  register: cli_whoami
+  become: true
+  become_user: jenkins
+
+- debug:
+    msg: "whoami={{ cli_whoami.stdout }}"

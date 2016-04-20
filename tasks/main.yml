@@ -6,6 +6,9 @@
 # Configure the service's launch options.
 - include: "service_config_{{ ansible_os_family }}.yml"
 
+# Enable the Jenkins CLI.
+- include: "cli_config.yml"
+
 - name: Ensure Service 'jenkins' Is Running
   service:
     name: jenkins
