@@ -17,15 +17,3 @@ def keys = new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl(jenkinsU
 admin.addProperty(keys)
 
 admin.save()
-
-// Scratch: Trying to figure out how to assign an SSH key for the Jenkins "admin" user.
-
-//println(Jenkins.instance.securityRealm.properties)
-//println(Jenkins.instance.securityRealm.allUsers[0].id)
-
-//def admin = Jenkins.instance.securityRealm.allUsers.findAll { u -> "admin".equals(u.id) }[0]
-//println("admin.properties: " + admin.properties + "\n")
-//def adminSshProperty = admin.getProperty(org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl.class)
-//println("adminSshProperty.properties: " + adminSshProperty.properties + "\n")
-
-//org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl
