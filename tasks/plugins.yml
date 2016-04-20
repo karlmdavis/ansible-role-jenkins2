@@ -1,0 +1,24 @@
+---
+# This file is not included by default. It can be included via a task:
+# include: "plugins_{{ ansible_os_family }}.yml"
+
+# Installs the "standard" Jenkins 2.0 plugins, as well as any additional that 
+# are specified in the 'plugins_extra' variable.
+
+- name: List Plugins
+  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} list-plugins | cut -f 1 -d ' '"
+  register: plugins_installed
+
+# FIXME: This is not idempotent, as it will always run and always report as changed.
+# FIXME: All of the plugins can be joined into a space-separated list and run in a single command.
+- name: Install/Update Specified Plugins
+  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} install-plugin {{ item }}"
+  with_items:
+    - "{{ jenkins_plugins_recommended }}"
+    - "{{ jenkins_plugins_extra }}"
+  become: true
+  become_user: jenkins
+  notify:
+    - "Restart Service 'jenkins'"
+
+# TODO Install/Update Other Plugins

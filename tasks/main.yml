@@ -9,6 +9,9 @@
 # Enable the Jenkins CLI.
 - include: "cli_config.yml"
 
+# Install and/or update plugins.
+- include: "plugins.yml"
+
 - name: Ensure Service 'jenkins' Is Running
   service:
     name: jenkins

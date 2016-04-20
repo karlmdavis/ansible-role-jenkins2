@@ -12,7 +12,7 @@
     state: directory
     owner: jenkins
     group: jenkins
-    mode: 0744
+    mode: 0755
   become: true
 
 - name: Jenkins Script - Configure Slave Agent Port
@@ -52,10 +52,24 @@
   notify:
     - "Restart Service 'jenkins'"
 
-# Fire any pending restart handlers now, as all of the above tasks will not be
-# applied until Jenkins restarts, and are required in order for the CLI-using
+- name: Jenkins Script - Refresh Update Center
+  template:
+    src: updateCenterRefresh.groovy
+    dest: /var/lib/jenkins/init.groovy.d/updateCenterRefresh.groovy
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+  notify:
+    - "Restart Service 'jenkins'"
+
+# Fire any pending restart handlers now, as all of the above scripts will not 
+# be run until Jenkins restarts, and are required in order for the CLI-using
 # tasks below to work.
 - meta: flush_handlers
+
+# At this point (once the service is restarted), the CLI itself should be usable
+# by the 'jenkins' system user (and its SSH keys).
 
 - name: Create Jenkins CLI Directory
   file:
@@ -63,7 +77,7 @@
     state: directory
     owner: jenkins
     group: jenkins
-    mode: 0744
+    mode: 0755
   become: true
 
 # The CLI comes "baked in" to the Jenkins WAR. Easiest way to extract it is 
@@ -82,6 +96,3 @@
   register: cli_whoami
   become: true
   become_user: jenkins
-
-- debug:
-    msg: "whoami={{ cli_whoami.stdout }}"
