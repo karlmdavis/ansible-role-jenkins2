@@ -68,6 +68,10 @@
 # tasks below to work.
 - meta: flush_handlers
 
+- name: Wait for Jenkins HTTP
+  wait_for:
+    port: "{{ jenkins_port }}"
+
 # At this point (once the service is restarted), the CLI itself should be usable
 # by the 'jenkins' system user (and its SSH keys).
 
