@@ -1,7 +1,4 @@
 ---
 
 - name: Restart Service 'jenkins'
-  service:
-    name: jenkins
-    state: restarted
-  become: true
+  include: ../handlers/restart_service.yml

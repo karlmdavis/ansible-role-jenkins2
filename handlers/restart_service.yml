@@ -1,0 +1,16 @@
+---
+
+- name: Restart Service 'jenkins'
+  service:
+    name: jenkins
+    state: restarted
+  become: true
+
+- name: Wait for Jenkins HTTP
+  uri:
+    url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/login"
+    status_code: 200
+  register: jenkins_login_page
+  until: jenkins_login_page.status == 200
+  retries: 60
+  delay: 1
