@@ -69,8 +69,13 @@
 - meta: flush_handlers
 
 - name: Wait for Jenkins HTTP
-  wait_for:
-    port: "{{ jenkins_port }}"
+  uri:
+    url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/login"
+    status_code: 200
+  register: jenkins_login_page
+  until: jenkins_login_page.status == 200
+  retries: 60
+  delay: 1
 
 # At this point (once the service is restarted), the CLI itself should be usable
 # by the 'jenkins' system user (and its SSH keys).
