@@ -3,31 +3,54 @@ Role Name
 
 This [Ansible](https://www.ansible.com/) role can be used to install and manage [Jenkins 2](https://jenkins.io/2.0/).
 
-TODO flesh out the other sections
-
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role requires Ansible 2.0.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below, along with default values (see [vars/main.yml](vars/main.yml)):
+
+    # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
+    jenkins_port: 8080
+
+Override this variable to set the port that Jenkins will run on.
+
+    # The context path that Jenkins will be hosted at, e.g. '/foo' in 
+    # 'http://localhost:8080/foo'. Leave as '' to host at root path.
+    jenkins_context_path: ''
+
+Override this variable if Jenkins needs to be hosted at a context path/prefix other than the root (default).
+
+
+    # The additional plugins that users of this role would like to be installed 
+    # (must be overridden).
+    jenkins_plugins_extra: []
+
+Override this variable to install additional Jenkins plugins. These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [vars/main.yml](vars/main.yml)).
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role does not have direct dependencies on other Ansible roles. However, it does require that a Java JRE be available on the system path.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+This role can be installed, as follows:
+
+    $ ansible-galaxy install karlmdavis.jenkins2
+
+This role can be applied, as follows:
 
     - hosts: servers
+      vars:
+        jenkins_plugins_extra:
+          - github-oauth
       roles:
-         - { role: username.rolename, x: 42 }
+         - ansible-jenkins2
 
 License
 -------
@@ -41,4 +64,4 @@ This project is in the worldwide [public domain](LICENSE.md). As stated in [CONT
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+This plugin was authored by Karl M. Davis (https://justdavis.com/karl/).
