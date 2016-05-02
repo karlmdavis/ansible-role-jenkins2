@@ -5,6 +5,37 @@ import jenkins.model.*;
 import hudson.*;
 import hudson.model.*;
 
+// Design Note: This script started off simple, but has ended up being a bit of
+// a monstrosity, due to a number of constraints and requirements:
+// 1. Support Multiple Security Realms: When first installed, Jenkins will be 
+//    using the `hudson.security.HudsonPrivateSecurityRealm`, with the default 
+//    `admin` account. Many users will wish to switch to a different realm,
+//    though. In fact, it's quite possible that the same Ansible playbook run
+//    will need to support the default role+user at the start of its execution,
+//    and a custom one towards the end of its execution. Imagine a user 
+//    installing Jenkins, and using Ansible in that first run to install a 
+//    security plugin, configure that plugin, then restart Jenkins, and use 
+//    the CLI -- all in the same run.
+//    Supporting this means introspecting the active security realm, and 
+//    choosing the user whose SSH key will be set based on that.
+// 2. Odd User Lookups Behavior: Not sure why, but calling the following line 
+//    of code throws odd exceptions if run in an init script, after the GitHub 
+//    OAuth security realm has been activated:
+//
+//        Jenkins.instance.securityRealm.loadUserByUsername("<foo>")
+//
+//    That code works fine later in the script console, but not in an init
+//    script. No clue why.
+//    Fortunately, `User.get("foo")` is a reasonable substitute.
+// 3. Broken SSH Key Auth Behavior: Don't assign the same public SSH key to two
+//    separate users, even if one of them is in a different and inactive 
+//    security realm. If the same SSH key is assigned to the default realm's 
+//    `admin` user and a user from the GitHub OAuth realm, Jenkins will still 
+//    try (and fail) to login the CLI as `admin`, even if the OAuth realm is the
+//    active one.
+//    The workaround for this is the last section of the script wherein the SSH
+//    key is removed from all other users.
+
 // Debugging Note: Output from this script won't appear in webapp log UI, but 
 // instead in the system log file, e.g. `/var/log/jenkins/jenkins.log`. 
 
