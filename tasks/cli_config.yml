@@ -96,3 +96,4 @@
   register: cli_whoami
   become: true
   become_user: jenkins
+  changed_when: false
