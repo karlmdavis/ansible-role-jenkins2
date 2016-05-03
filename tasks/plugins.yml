@@ -33,7 +33,7 @@
 
 - name: Update Plugins
   shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} install-plugin {{ item }}"
-  with_items: plugins_updates.stdout.split()
+  with_items: "{{ plugins_updates.stdout.split() }}"
   when: plugins_updates.stdout != ''
   become: true
   become_user: jenkins
