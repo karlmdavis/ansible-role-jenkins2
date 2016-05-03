@@ -13,7 +13,7 @@ This role requires Ansible 2.0.
 Role Variables
 --------------
 
-Available variables are listed below, along with default values (see [vars/main.yml](vars/main.yml)):
+Available variables are listed below, along with default values (see [defaults/main.yml](defaults/main.yml)):
 
     # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
     jenkins_port: 8080
@@ -26,12 +26,16 @@ Override this variable to set the port that Jenkins will run on.
 
 Override this variable if Jenkins needs to be hosted at a context path/prefix other than the root (default).
 
+    jenkins_admin_users:
+      - 'hudson.security.HudsonPrivateSecurityRealm:admin'
+
+Override this variable to support an alternative authorization system (i.e.  security realm). Note that this doesn't install/configure that realm, it's just needed to ensure that the Jenkins CLI can still be used once you've activated the realm. For example, if you're using the [GitHub OAuth plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)'s security realm, you would add an extra entry such as "`org.jenkinsci.plugins.GithubSecurityRealm:your_github_user_id`" as the first element in this list (and leave the `admin` entry, too).
 
     # The additional plugins that users of this role would like to be installed 
     # (must be overridden).
     jenkins_plugins_extra: []
 
-Override this variable to install additional Jenkins plugins. These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [vars/main.yml](vars/main.yml)).
+Override this variable to install additional Jenkins plugins. These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
 
 Dependencies
 ------------
