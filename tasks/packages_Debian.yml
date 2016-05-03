@@ -22,7 +22,7 @@
     - python-httplib2
 
 - name: Check for Jenkins 2.0
-  command: dpkg-query -W jenkins_2.0_all
+  command: dpkg-query -W jenkins
   register: jenkins_deb_check
   failed_when: jenkins_deb_check.rc > 1
   changed_when: jenkins_deb_check.rc == 1
