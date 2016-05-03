@@ -5,7 +5,7 @@
 - name: Configure Port
   lineinfile:
     dest: /etc/default/jenkins
-    regexp: =^HTTP_PORT= 
+    regexp: ^HTTP_PORT= 
     line: "HTTP_PORT={{ jenkins_port }}"
   become: true
   notify:
