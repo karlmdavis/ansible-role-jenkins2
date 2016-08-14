@@ -8,7 +8,7 @@ This [Ansible](https://www.ansible.com/) role can be used to install and manage 
 Requirements
 ------------
 
-This role requires Ansible 2.0.
+This role requires Ansible 2.0 or later.
 
 Role Variables
 --------------
