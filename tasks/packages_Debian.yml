@@ -19,6 +19,9 @@
   with_items:
     # The uri module requires httplib2, prior to Ansible 2.1.
     - python-httplib2
+    # Allows running tasks as unprivileged users, which we need to do when running Jenkins CLI.
+    # Reference: https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
+    - acl
 
 - name: Jenkins APT Key
   apt_key:
