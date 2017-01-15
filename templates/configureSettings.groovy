@@ -16,7 +16,7 @@ import hudson.model.*;
 
 // Set the Jenkins external URL, if defined.
 // (Hat tip: http://stackoverflow.com/questions/30355079/jenkins-setting-root-url-via-groovy-api.)
-def externalUrl = "{{ '' if jenkins_url_external is None else jenkins_url_external | default('') | trim }}"
+def externalUrl = "{{ '' if jenkins_url_external == None else (jenkins_url_external | default('') | trim) }}"
 def locationConfig = JenkinsLocationConfiguration.get()
 println("Configuring Jenkins External URL (current URL: '${locationConfig.url}')...")
 if(!externalUrl.equals(locationConfig.url)) {
