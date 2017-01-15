@@ -6,6 +6,17 @@
 # Configure the service's launch options.
 - include: "service_config_{{ ansible_os_family }}.yml"
 
+- name: Jenkins Script - Configure Settings
+  template:
+    src: configureSettings.groovy
+    dest: /var/lib/jenkins/init.groovy.d/configureSettings.groovy
+    owner: jenkins
+    group: jenkins
+    mode: 0744
+  become: true
+  notify:
+    - "Restart Service 'jenkins'"
+
 # Enable the Jenkins CLI.
 - include: "cli_config.yml"
 

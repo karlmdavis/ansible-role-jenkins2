@@ -26,6 +26,14 @@ Override this variable to set the port that Jenkins will run on.
 
 Override this variable if Jenkins needs to be hosted at a context path/prefix other than the root (default).
 
+    # The external URL that users will use to access Jenkins. Gets set in the
+    # Jenkins config and used in emails, webhooks, etc.
+    # If this is left empty/None, the configuration will not be set and Jenkins
+    # will try to auto-discover this (which won't work correctly if it's proxied).
+    jenkins_url_external: ''
+
+Override this variable if Jenkins is running behind a proxy or if users will be accessing it via something other than the system's hostname. It will ensure that links in emails and whatnot are correct.
+
     jenkins_admin_users:
       - 'hudson.security.HudsonPrivateSecurityRealm:admin'
 
