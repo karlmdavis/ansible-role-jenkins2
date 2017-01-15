@@ -6,6 +6,16 @@
 # Configure the service's launch options.
 - include: "service_config_{{ ansible_os_family }}.yml"
 
+- name: Create Jenkins Init Script Directory
+  # Reference: https://wiki.jenkins-ci.org/display/JENKINS/Post-initialization+script
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+  become: true
+
 - name: Jenkins Script - Configure Settings
   template:
     src: configureSettings.groovy
