@@ -45,6 +45,11 @@ Override this variable to support an alternative authorization system (i.e.  sec
 
 Override this variable to install additional Jenkins plugins. These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
 
+    # Additional options that will be added to JAVA_ARGS
+    jenkins_java_args_extra: ''
+
+Override this variable to define extra arguments that will be added to the "`JAVA_ARGS`" environmnet variable used by Jenkins.
+
 Dependencies
 ------------
 

@@ -39,7 +39,7 @@
   lineinfile:
     dest: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
-    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false {{ jenkins_java_args_extra }}"'
   become: true
   notify:
     - "Restart Service 'jenkins'"
