@@ -56,3 +56,6 @@ jenkins_plugins_recommended:
 # The additional plugins that users of this role would like to be installed 
 # (must be overridden).
 jenkins_plugins_extra: []
+
+# Additional options that will be added to JAVA_ARGS
+jenkins_java_args_extra: ''
