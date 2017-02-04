@@ -48,7 +48,7 @@ Override this variable to install additional Jenkins plugins. These would be in 
     # Additional options that will be added to JAVA_ARGS
     jenkins_java_args_extra: ''
 
-Override this variable to define extra arguments that will be added to the "`JAVA_ARGS`" environmnet variable used by Jenkins.
+Override this variable to define extra arguments that will be added to the "`JAVA_ARGS`" environmnet variable used by Jenkins, such as the JVM memory settings, e.g. `-Xmx4g`.
 
 Dependencies
 ------------
