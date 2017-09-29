@@ -58,6 +58,8 @@ script:
 after_script:
   # Inspect the management host environment a bit post-test. Just to aid in debugging.
   - pwd
+  - echo $HOME
+  - ls -la $HOME/.ssh
   - ls -la ../
   - ls -la ./
   - ls -la ./roles/
