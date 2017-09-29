@@ -3,14 +3,8 @@
 # Installs and verifies Jenkins on the container being used for the test case. 
 ##
 
-# Install an Oracle 8 JRE.
-- hosts: docker_container
-  # The "geerlingguy.java" role requires this, but doesn't declare it.
-  become: true
-  vars:
-    java_packages: ["oracle-java8-installer"]
-  roles:
-    - geerlingguy.java
+# Install Java 8.
+- include: "install_java_{{ ansible_distribution }}_{{ ansible_distribution_version }}.yml"
 
 # Install Jenkins.
 - hosts: docker_container

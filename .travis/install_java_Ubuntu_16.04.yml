@@ -1,0 +1,8 @@
+---
+
+- hosts: docker_container
+  become: true
+  vars:
+    java_packages: ['openjdk-8-jdk']
+  roles:
+    - geerlingguy.java
