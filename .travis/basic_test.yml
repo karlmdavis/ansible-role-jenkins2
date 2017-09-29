@@ -4,7 +4,16 @@
 ##
 
 # Install Java 8.
-- include: "install_java_{{ ansible_distribution }}_{{ ansible_distribution_version }}.yml"
+- hosts: docker_container
+  become: true
+  vars:
+    java_packages: ['openjdk-8-jdk']
+  roles:
+    # This package name works for:
+    # * Ubuntu 16.04.
+    - role: geerlingguy.java
+      java_packages: ['openjdk-8-jdk']
+      when: ansible_distribution == 'Ubuntu'
 
 # Install Jenkins.
 - hosts: docker_container
