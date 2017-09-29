@@ -9,12 +9,8 @@ set -v
 # Grab the container prefix to use from args.
 containerPrefix="${1}"
 
-# Grab the public SSH key to allow to connect to the `ansible_test` user.
-ansibleAuthorizedSshPublicKey="${2}"
-
 # Build and start the container, running systemd and ssh.
 docker build \
-	--build-arg ansibleAuthorizedSshPublicKey="${ansibleAuthorizedSshPublicKey}" \
 	--tag "${containerPrefix}/${PLATFORM}" \
 	"./.travis/docker_platforms/${PLATFORM}"
 docker run \
@@ -26,4 +22,3 @@ docker run \
 	--tmpfs /run/lock \
 	--name "${containerPrefix}.${PLATFORM}" \
 	"${containerPrefix}/${PLATFORM}"
-
