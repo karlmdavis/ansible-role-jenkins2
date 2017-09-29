@@ -21,13 +21,10 @@ env:
   # Testing against CentOS would also (mostly) cover RHEL 7.
   #- TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
 
-addons:
-  apt:
-    packages:
-      # Need this due to hardcoding Ansible hosts' passwords in our test inventory.
-      - sshpass
-
 install:
+  # Generate an SSH key for use when connecting to Docker containers.
+  - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+
   # Prep the Docker container that will be used.
   - ./.travis/docker_launch.sh "ansible_test_jenkins2"
 
@@ -64,7 +61,6 @@ after_script:
   - ls -la ../
   - ls -la ./
   - ls -la ./roles/
-  - ls -la ~/.ssh
 
   # Inspect the Docker container a bit post-test. Just to aid in debugging.
   - docker exec ansible_test_bluebutton_data_server.${PLATFORM} /usr/bin/ls /opt/jenkins
