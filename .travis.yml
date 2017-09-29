@@ -26,7 +26,7 @@ install:
   - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
 
   # Prep the Docker container that will be used.
-  - ./.travis/docker_launch.sh "ansible_test_jenkins2" /home/travis/.ssh/id_rsa.pub
+  - ./.travis/docker_launch.sh "ansible_test_jenkins2" `cat /home/travis/.ssh/id_rsa.pub`
 
   # Install Ansible and other required Python libraries.
   - pip install "$ANSIBLE_SPEC" && pip install -r .travis/requirements.txt

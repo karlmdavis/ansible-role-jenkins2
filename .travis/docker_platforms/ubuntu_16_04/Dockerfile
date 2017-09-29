@@ -31,7 +31,7 @@ RUN systemctl enable ssh
 RUN adduser ansible_test && adduser ansible_test sudo
 RUN echo ansible_test ALL=NOPASSWD:ALL > /etc/sudoers.d/ansible_test
 ARG ansibleAuthorizedSshPublicKey
-COPY $ansibleAuthorizedSshPublicKey /home/ansible_test/authorized_keys
+RUN echo "${ansibleAuthorizedSshPublicKey}" >> /home/ansible_test/authorized_keys
 RUN echo 'ansible_test:secret' | chpasswd
 
 # Ensure that Python 2.7 is installed, for Ansible.
