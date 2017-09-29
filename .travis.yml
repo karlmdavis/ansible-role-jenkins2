@@ -64,6 +64,7 @@ after_script:
   - ls -la ../
   - ls -la ./
   - ls -la ./roles/
+  - ls -la ~/.ssh
 
   # Inspect the Docker container a bit post-test. Just to aid in debugging.
   - docker exec ansible_test_bluebutton_data_server.${PLATFORM} /usr/bin/ls /opt/jenkins
