@@ -15,7 +15,7 @@
 # Install Jenkins.
 - hosts: docker
   roles:
-    - ansible-jenkins2
+    - karlmdavis.jenkins2
 
 # Run some test cases to verify that Jenkins is running as expected.
 - include: tests-verify.yml
