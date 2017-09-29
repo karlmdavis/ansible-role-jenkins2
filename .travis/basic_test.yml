@@ -4,7 +4,7 @@
 ##
 
 # Install an Oracle 8 JRE.
-- hosts: docker
+- hosts: docker_container
   # The "geerlingguy.java" role requires this, but doesn't declare it.
   become: true
   vars:
@@ -13,7 +13,7 @@
     - geerlingguy.java
 
 # Install Jenkins.
-- hosts: docker
+- hosts: docker_container
   roles:
     - karlmdavis.jenkins2
 

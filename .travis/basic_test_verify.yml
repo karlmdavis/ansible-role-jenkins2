@@ -3,7 +3,7 @@
 # Verifies that Jenkins is correctly installed and running on the container
 # being used for the test case.
 ##
-- hosts: docker
+- hosts: docker_container
   tasks:
     - name: Ensure Service 'jenkins' Is Running
       service:
