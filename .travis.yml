@@ -27,7 +27,7 @@ install:
 
   # Prep the Docker container that will be used.
   - ./.travis/docker_launch.sh "ansible_test_jenkins2" `cat /home/travis/.ssh/id_rsa.pub`
-  - cat ~/.ssh/id_rsa.pub | docker exec --interactive ansible_test_jenkins2.${PLATFORM} /bin/bash -c "cat >> /home/ansible_test/.ssh/authorized_keys"
+  - cat ~/.ssh/id_rsa.pub | docker exec --interactive ansible_test_jenkins2.${PLATFORM} /bin/bash -c "mkdir /home/ansible_test/.ssh && cat >> /home/ansible_test/.ssh/authorized_keys"
 
   # Install Ansible and other required Python libraries.
   - pip install "$ANSIBLE_SPEC" && pip install -r .travis/requirements.txt
