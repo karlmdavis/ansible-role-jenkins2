@@ -17,7 +17,7 @@ services:
 # Each list item here will be run as a separate test by Travis CI.
 env:
   - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
-  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible=2.0.2.0"
+  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.0.2.0"
   # Testing against CentOS would also (mostly) cover RHEL 7.
   #- TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
 
