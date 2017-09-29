@@ -1,11 +1,10 @@
 ---
 ##
-# Installs Jenkins on the system running this test. Then, calls 
-# tests-verify.yml to verify that Jenkins is running as expected.
+# Installs and verifies Jenkins on the container being used for the test case. 
 ##
 
 # Install an Oracle 8 JRE.
-- hosts: localhost
+- hosts: docker
   # The "geerlingguy.java" role requires this, but doesn't declare it.
   become: true
   vars:
@@ -14,7 +13,7 @@
     - geerlingguy.java
 
 # Install Jenkins.
-- hosts: localhost
+- hosts: docker
   roles:
     - ansible-jenkins2
 

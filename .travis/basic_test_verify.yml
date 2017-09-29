@@ -1,9 +1,9 @@
 ---
 ##
-# Verifies that Jenkins is correctly installed and running on the system 
-# running this test.
+# Verifies that Jenkins is correctly installed and running on the container
+# being used for the test case.
 ##
-- hosts: localhost
+- hosts: docker
   tasks:
     - name: Ensure Service 'jenkins' Is Running
       service:
