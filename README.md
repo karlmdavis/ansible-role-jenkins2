@@ -3,7 +3,7 @@ Role Name
 
 This [Ansible](https://www.ansible.com/) role can be used to install and manage [Jenkins 2](https://jenkins.io/2.0/).
 
-![Travis CI Build Status](https://travis-ci.org/karlmdavis/ansible-jenkins2.svg)
+[![Build Status](https://travis-ci.org/karlmdavis/ansible-jenkins2.svg?branch=master)](https://travis-ci.org/karlmdavis/ansible-jenkins2)
 
 Requirements
 ------------
