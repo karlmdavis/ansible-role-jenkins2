@@ -25,6 +25,10 @@ install:
   # Generate an SSH key for use when connecting to Docker containers.
   - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
 
+  # FIXME: Remove this debugging
+  - echo $HOME
+  - ls -la $HOME/.ssh
+
   # Prep the Docker container that will be used.
   - ./.travis/docker_launch.sh "ansible_test_jenkins2"
 
@@ -58,8 +62,6 @@ script:
 after_script:
   # Inspect the management host environment a bit post-test. Just to aid in debugging.
   - pwd
-  - echo $HOME
-  - ls -la $HOME/.ssh
   - ls -la ../
   - ls -la ./
   - ls -la ./roles/
