@@ -46,7 +46,7 @@ script:
   - ansible-playbook $TEST_PLAY --inventory-file=inventory --syntax-check
 
   # Run the Ansible test case.
-  - ansible-playbook $TEST_PLAY --inventory-file=inventory -vvvv
+  - ansible-playbook $TEST_PLAY --inventory-file=inventory
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
