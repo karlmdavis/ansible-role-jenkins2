@@ -12,7 +12,7 @@
       become: true
       when:
         - ansible_distribution == 'Ubuntu'
-        - ansible_distribution_version == '16.04'
+        - ansible_distribution_version == '14.04'
 
 # Install Java 8.
 - hosts: docker_container
