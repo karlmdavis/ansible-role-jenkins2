@@ -6,10 +6,17 @@
 # Prepare to install Java 8 (depending on OS, may not need to do anything).
 - hosts: docker_container
   tasks:
-    - name: Add the openjdk-r/ppa PPA for Ubuntu 14.04
-      apt_repository:
-        repo: 'ppa:openjdk-r/ppa'
-      become: true
+    - block:
+      - name: Add the webupd8team/java PPA for Ubuntu 14.04
+        apt_repository:
+          repo: 'ppa:webupd8team/java'
+        become: true
+      - name: Mark Oracle Java License Selected
+        shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+        become: true
+      - name: Mark Oracle Java License Seen
+        shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+        become: true
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '14.04'
@@ -17,15 +24,20 @@
 # Install Java 8.
 - hosts: docker_container
   become: true
-  vars:
-    java_packages: ['openjdk-8-jdk']
   roles:
-    # This package name works for:
-    # * Ubuntu 14.04 (with the PPA above)
-    # * Ubuntu 16.04.
+    # Have to use Oracle's JDK on Ubuntu 14.04, as OpenJDK wasn't working
+    # correctly with ca-certificates-java (the 
+    # `/etc/ca-certificates/update.d/jks-keystore` script was hanging).
     - role: geerlingguy.java
-      java_packages: ['openjdk-8-jdk']
-      when: ansible_distribution == 'Ubuntu'
+      java_packages: ['oracle-java8-installer']
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '14.04'
+    - role: geerlingguy.java
+      java_packages: ['openjdj-8-jdk']
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '16.04'
 
 # Install Jenkins.
 - hosts: docker_container
