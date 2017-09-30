@@ -11,12 +11,15 @@
         apt_repository:
           repo: 'ppa:webupd8team/java'
         become: true
-      - name: Mark Oracle Java License Selected
-        shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+      - name: Accept Oracle Java License
+        debconf:
+          name: oracle-java8-installer
+          question: "{{ item.question }}"
+          vtype: "{{ item.vtype }}"
+          value: "{{ item.value }}"
         become: true
-      - name: Mark Oracle Java License Seen
-        shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
-        become: true
+        with_items:
+          - { question: 'shared/accepted-oracle-license-v1-1', vtype: 'select', value: 'true' }
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '14.04'
