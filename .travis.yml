@@ -8,45 +8,70 @@
 language: python
 python: "2.7"
 
-# Use a full VM (rather than a sudo-less container), as we need sudo access to
-# test this Ansible role.
+# The tests will be run in Docker containers, to verify compatibility with
+# various OSes.
 sudo: required
+services:
+  - docker
 
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+# Each list item here will be run as a separate test by Travis CI.
+env:
+  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
+  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.0.2.0"
+  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_14_04 ANSIBLE_SPEC="ansible"
+  # Testing against CentOS would also (mostly) cover RHEL 7.
+  #- TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
 
 install:
+  # Generate an SSH key for use when connecting to Docker containers.
+  - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+
+  # Prep the Docker container that will be used.
+  - ./.travis/docker_launch.sh "ansible_test_jenkins2"
+  - cat ~/.ssh/id_rsa.pub | docker exec --interactive ansible_test_jenkins2.${PLATFORM} /bin/bash -c "mkdir /home/ansible_test/.ssh && cat >> /home/ansible_test/.ssh/authorized_keys"
+
   # Install Ansible and other required Python libraries.
-  - pip install -r tests/requirements.txt
-
-  # Check ansible version
+  - pip install "$ANSIBLE_SPEC" && pip install -r .travis/requirements.txt
   - ansible --version
-
-  # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
+  - mkdir .travis/roles
+  - ln -s `pwd` .travis/roles/karlmdavis.jenkins2
 
   # Install the additional Ansible roles that are required for testing this one.
-  - ansible-galaxy install -r tests/install_roles.yml
+  - ansible-galaxy install --roles-path=.travis/roles --role-file=.travis/install_roles.yml
 
 script:
-  # Basic role syntax check
-  - ansible-playbook tests/tests-install.yml -i tests/inventory --syntax-check
+  # Ensure that Ansible treats this folder as the project's base.
+  - cd .travis/
 
-  # Run the role/playbook.
-  - "ansible-playbook tests/tests-install.yml -i tests/inventory --connection=local"
+  # Basic role syntax check
+  - ansible-playbook $TEST_PLAY --inventory-file=inventory --syntax-check
+
+  # Run the Ansible test case.
+  - ansible-playbook $TEST_PLAY --inventory-file=inventory
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
-    ansible-playbook tests/tests-install.yml -i tests/inventory --connection=local
+    ansible-playbook $TEST_PLAY --inventory-file=inventory
     | tee /dev/tty
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
-  # Make sure Jenkins is running.
-  #- curl http://localhost:$HTTP_PORT/$PREFIX
+
+after_script:
+  # Inspect the management host environment a bit post-test. Just to aid in debugging.
+  - pwd
+  - ls -la ../
+  - ls -la ./
+  - ls -la ./roles/
+
+  # Inspect the Docker container a bit post-test. Just to aid in debugging.
+  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /opt/jenkins
+  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /var/lib/jenkins
+  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /var/lib/jenkins/init.groovy.d
+  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/cat /var/log/jenkins/jenkins.log
+
+  # Stop all Docker containers.
+  - docker stop $(docker ps -a -q)
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

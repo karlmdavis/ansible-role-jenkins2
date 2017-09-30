@@ -1,0 +1,51 @@
+---
+##
+# Installs and verifies Jenkins on the container being used for the test case. 
+##
+
+# Prepare to install Java 8 (depending on OS, may not need to do anything).
+- hosts: docker_container
+  tasks:
+    - block:
+      - name: Add the webupd8team/java PPA for Ubuntu 14.04
+        apt_repository:
+          repo: 'ppa:webupd8team/java'
+        become: true
+      - name: Accept Oracle Java License
+        debconf:
+          name: oracle-java8-installer
+          question: "{{ item.question }}"
+          vtype: "{{ item.vtype }}"
+          value: "{{ item.value }}"
+        become: true
+        with_items:
+          - { question: 'shared/accepted-oracle-license-v1-1', vtype: 'select', value: 'true' }
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '14.04'
+
+# Install Java 8.
+- hosts: docker_container
+  become: true
+  roles:
+    # Have to use Oracle's JDK on Ubuntu 14.04, as OpenJDK wasn't working
+    # correctly with ca-certificates-java (the 
+    # `/etc/ca-certificates/update.d/jks-keystore` script was hanging).
+    - role: geerlingguy.java
+      java_packages: ['oracle-java8-installer']
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '14.04'
+    - role: geerlingguy.java
+      java_packages: ['openjdk-8-jdk']
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '16.04'
+
+# Install Jenkins.
+- hosts: docker_container
+  roles:
+    - karlmdavis.jenkins2
+
+# Run some test cases to verify that Jenkins is running as expected.
+- include: basic_test_verify.yml
