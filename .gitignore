@@ -1,2 +1,5 @@
 # Ignore Eclipse metadata
 .project
+
+# Ignore Python virtual env.
+venv/
