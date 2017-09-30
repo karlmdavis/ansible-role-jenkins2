@@ -3,6 +3,17 @@
 # Installs and verifies Jenkins on the container being used for the test case. 
 ##
 
+# Prepare to install Java 8 (depending on OS, may not need to do anything).
+- hosts: docker_container
+  tasks:
+    - name: Add the openjdk-r/ppa PPA for Ubuntu 14.04
+      apt_repository:
+        repo: 'ppa:openjdk-r/ppa'
+      become: true
+      when:
+        - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version == '16.04'
+
 # Install Java 8.
 - hosts: docker_container
   become: true
@@ -10,6 +21,7 @@
     java_packages: ['openjdk-8-jdk']
   roles:
     # This package name works for:
+    # * Ubuntu 14.04 (with the PPA above)
     # * Ubuntu 16.04.
     - role: geerlingguy.java
       java_packages: ['openjdk-8-jdk']
