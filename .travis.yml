@@ -1,8 +1,10 @@
 ---
 ##
-# The Travis CI build for this project. Yes, it's ironic to build a Jenkins-
-# installation role with its competitor. But this is the best option, until 
-# this project is complete enough to be capable of dogfooding itself.
+# The Travis CI build for this project.
+#
+# Yes, it's ironic to build a Jenkins-installation role with its competitor.
+# But this is the best option, at least until this project is complete enough
+# to be capable of dogfooding itself.
 ##
 
 language: python
@@ -14,48 +16,30 @@ sudo: required
 services:
   - docker
 
-# Each list item here will be run as a separate test by Travis CI.
 env:
-  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
-  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.0.2.0"
-  - TEST_PLAY=basic_test.yml PLATFORM=ubuntu_14_04 ANSIBLE_SPEC="ansible"
-  # Testing against CentOS would also (mostly) cover RHEL 7.
-  #- TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
+  global:
+    - ROLE=karlmdavis.jenkins2
+    - CONTAINER_PREFIX=ansible_test_jenkins2
+
+# Each list item here will be run as a separate test by Travis CI.
+matrix:
+  include:
+    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
+    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.0.2.0"
+    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_14_04 ANSIBLE_SPEC="ansible"
+    # Testing against CentOS would also (mostly) cover RHEL 7.
+    #- env: TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
 
 install:
   # Generate an SSH key for use when connecting to Docker containers.
-  - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+  - ssh-keygen -t rsa -N '' -f /home/travis/.ssh/id_rsa
 
-  # Prep the Docker container that will be used.
-  - ./.travis/docker_launch.sh "ansible_test_jenkins2"
-  - cat ~/.ssh/id_rsa.pub | docker exec --interactive ansible_test_jenkins2.${PLATFORM} /bin/bash -c "mkdir /home/ansible_test/.ssh && cat >> /home/ansible_test/.ssh/authorized_keys"
-
-  # Install Ansible and other required Python libraries.
-  - pip install "$ANSIBLE_SPEC" && pip install -r .travis/requirements.txt
-  - ansible --version
-  - mkdir .travis/roles
-  - ln -s `pwd` .travis/roles/karlmdavis.jenkins2
-
-  # Install the additional Ansible roles that are required for testing this one.
-  - ansible-galaxy install --roles-path=.travis/roles --role-file=.travis/install_roles.yml
+  # Prepare to run the tests.
+  - ./test/pre-test.sh /home/travis/.ssh/id_rsa.pub
 
 script:
-  # Ensure that Ansible treats this folder as the project's base.
-  - cd .travis/
-
-  # Basic role syntax check
-  - ansible-playbook $TEST_PLAY --inventory-file=inventory --syntax-check
-
-  # Run the Ansible test case.
-  - ansible-playbook $TEST_PLAY --inventory-file=inventory
-
-  # Run the role/playbook again, checking to make sure it's idempotent.
-  - >
-    ansible-playbook $TEST_PLAY --inventory-file=inventory
-    | tee /dev/tty
-    | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
+  # Run the tests.
+  - test/test.sh
 
 after_script:
   # Inspect the management host environment a bit post-test. Just to aid in debugging.
@@ -65,13 +49,13 @@ after_script:
   - ls -la ./roles/
 
   # Inspect the Docker container a bit post-test. Just to aid in debugging.
-  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /opt/jenkins
-  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /var/lib/jenkins
-  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/ls /var/lib/jenkins/init.groovy.d
-  - docker exec ansible_test_jenkins2.${PLATFORM} /usr/bin/cat /var/log/jenkins/jenkins.log
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /opt/jenkins
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins/init.groovy.d
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} cat /vat/log/jenkins/jenkins.log
 
-  # Stop all Docker containers.
-  - docker stop $(docker ps -a -q)
+  # Clean up after the test.
+  - test/post-test.sh
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

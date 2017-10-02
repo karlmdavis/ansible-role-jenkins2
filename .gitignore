@@ -1,9 +1,4 @@
-# Ignore Eclipse metadata
-.project
-
-# Ignore Python virtual env.
-venv/
-
-# Ignore local test junk.
-.travis/*.retry
-.travis/roles/
+# Ignore test junk.
+test/venv/
+test/roles/
+test/*.retry

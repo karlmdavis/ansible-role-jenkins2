@@ -1,9 +1,0 @@
-##
-# Lists the Python modules (aside from Ansible itself) that are required to run this Ansible role.
-#
-# This file is intended to be used to `pip install` things:
-#
-#     $ pip install -r requirements.txt
-##
-
-# (Note: This project does not currently require any additional dependencies.)
