@@ -1,9 +1,9 @@
+[![Build Status](https://travis-ci.org/karlmdavis/ansible-role-jenkins2.svg?branch=master)](https://travis-ci.org/karlmdavis/ansible-role-jenkins2)
+
 Ansible Role for Jenkins 2+
 ===========================
 
 This [Ansible](https://www.ansible.com/) role can be used to install and manage [Jenkins 2](https://jenkins.io/2.0/).
-
-[![Build Status](https://travis-ci.org/karlmdavis/ansible-jenkins2.svg?branch=master)](https://travis-ci.org/karlmdavis/ansible-jenkins2)
 
 Requirements
 ------------
