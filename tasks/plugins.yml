@@ -17,7 +17,7 @@
 # FIXME: All of the plugins can be joined into a space-separated list and run in a single command.
 - name: Install Plugins
   shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} install-plugin {{ item }}"
-  when: plugins_installed.stdout.find('{{ item }}') == -1
+  when: item not in plugins_installed.stdout
   with_items:
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
