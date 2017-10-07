@@ -52,7 +52,7 @@ after_script:
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /opt/jenkins
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins/init.groovy.d
-  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} cat /vat/log/jenkins/jenkins.log
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} cat /var/log/jenkins/jenkins.log
 
   # Clean up after the test.
   - test/post-test.sh
