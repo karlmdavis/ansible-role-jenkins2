@@ -31,27 +31,28 @@ jenkins_admin_users:
 
 # The plugins that the Jenkins 2.0 setup wizard installs by default. Currently, 
 # the best place to find this list seems to be in the source, here:
-# https://github.com/jenkinsci/jenkins/blob/master/war/src/main/js/api/plugins.js
-jenkins_plugins_recommended: 
-  - ant
+# https://github.com/jenkinsci/jenkins/blob/master/core/src/main/resources/jenkins/install/platform-plugins.json
+jenkins_plugins_recommended:
+  - cloudbees-folder
   - antisamy-markup-formatter
   - build-timeout
-  - cloudbees-folder
   - credentials-binding
-  - email-ext
-  - git
+  - timestamper
+  - ws-cleanup
+  - ant
   - gradle
-  - ldap
-  - mailer
+  - workflow-aggregator
+  - github-branch-source
+  - pipeline-github-lib
+  - pipeline-stage-view
+  - git
+  - subversion
+  - ssh-slaves
   - matrix-auth
   - pam-auth
-  - pipeline-stage-view
-  - ssh-slaves
-  - subversion
-  - timestamper
-  - workflow-aggregator
-  - github-organization-folder
-  - ws-cleanup
+  - ldap
+  - email-ext
+  - mailer
 
 # The additional plugins that users of this role would like to be installed 
 # (must be overridden).
