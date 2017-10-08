@@ -23,6 +23,8 @@
     # Allows running tasks as unprivileged users, which we need to do when running Jenkins CLI.
     # Reference: https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
     - acl
+    # Allows use of HTTPS APT repos.
+    - apt-transport-https
 
 - name: Determine APT Key and Repo to Use
   set_fact:
