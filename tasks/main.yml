@@ -1,10 +1,10 @@
 ---
 
-# Install all OS packages (including Jenkins itself).
-- include: "packages_{{ ansible_os_family }}.yml"
-
 # Configure the service's launch options.
 - include: "service_config_{{ ansible_os_family }}.yml"
+
+# Install all OS packages (including Jenkins itself).
+- include: "packages_{{ ansible_os_family }}.yml"
 
 - name: Create Jenkins Init Script Directory
   # Reference: https://wiki.jenkins-ci.org/display/JENKINS/Post-initialization+script
