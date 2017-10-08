@@ -24,15 +24,33 @@
     # Reference: https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
     - acl
 
-- name: Jenkins APT Key
+- name: Determine APT Key and Repo to Use
+  set_fact:
+    # Note: Both URLs currently have same key, but this might change in future.
+    jenkins_apt_key: "{{ 'https://pkg.jenkins.io/debian/jenkins.io.key' if jenkins_release_line == 'weekly' else 'https://pkg.jenkins.io/debian-stable/jenkins.io.key' }}"
+    jenkins_apt_repo: "{{ 'deb https://pkg.jenkins.io/debian binary/' if jenkins_release_line == 'weekly' else 'deb https://pkg.jenkins.io/debian-stable binary/' }}"
+
+- name: Add Jenkins APT Key
   apt_key:
-    url: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+    url: "{{ jenkins_apt_key }}"
     state: present
   become: true
 
-- name: Jenkins APT Repository
+- name: Remove Unused Jenkins APT Repositories
   apt_repository:
-    repo: "deb http://pkg.jenkins-ci.org/debian binary/"
+    repo: "{{ item }}"
+    state: absent
+    update_cache: true
+  become: true
+  with_items:
+    - 'deb http://pkg.jenkins-ci.org/debian binary/'
+    - 'deb https://pkg.jenkins.io/debian binary/'
+    - 'deb https://pkg.jenkins.io/debian-stable binary/'
+  when: "item != jenkins_apt_repo"
+
+- name: Add Jenkins APT Repository
+  apt_repository:
+    repo: "{{ jenkins_apt_repo }}"
     state: present
     update_cache: yes
   become: true

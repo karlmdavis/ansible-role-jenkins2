@@ -15,6 +15,11 @@ Role Variables
 
 Available variables are listed below, along with default values (see [defaults/main.yml](defaults/main.yml)):
 
+    # Install the LTS releases (as opposed to 'weekly').
+    jenkins_release_line: 'long_term_support'
+
+This value can be overridden to change which Jenkins release line will be installed.
+
     # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
     jenkins_port: 8080
 

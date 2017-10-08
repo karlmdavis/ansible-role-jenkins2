@@ -3,6 +3,12 @@
 # and can be overridden by the active play.
 # (Other files in this directory must be included via an `include_vars` task.)
 
+# Which Jenkins release line to use: must be either 'long_term_support' or
+# 'weekly'.
+# FIXME: Default should probably be Long Term Support, but that would not be
+# backwards compatible with earlier versions of this role.
+jenkins_release_line: 'weekly'
+
 # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
 jenkins_port: 8080
 
