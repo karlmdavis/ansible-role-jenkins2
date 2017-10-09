@@ -87,8 +87,8 @@
           {{ jenkins_cli_command }} groovy =
       become: true
       become_user: jenkins
-      register: cli_test_script
-      changed_when: "'Changed' not in cli_test_script.stdout"
+      register: shell_jenkins_security
+      changed_when: "'Changed' not in shell_jenkins_security.stdout"
     - name: Update Jenkins CLI Command
       set_fact:
         jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
