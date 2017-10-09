@@ -39,6 +39,12 @@ import hudson.model.*;
 // Debugging Note: Output from this script won't appear in webapp log UI, but 
 // instead in the system log file, e.g. `/var/log/jenkins/jenkins.log`. 
 
+// Finally, ensure that SSH access is enabled (on a randomized port).
+def sshModuleDescriptor = Jenkins.instance.getDescriptor("org.jenkinsci.main.modules.sshd.SSHD")
+sshModuleDescriptor.setPort(0)
+sshModuleDescriptor.getActualPort() // Not sure why, but seems to be needed.
+sshModuleDescriptor.save()
+
 // This is the list of (possible) admin users that need to allow SSH logins by 
 // the server's `jenkins` system user account. It is passed into this script 
 // via Ansible templating. Each entry in the list will be a string of the form

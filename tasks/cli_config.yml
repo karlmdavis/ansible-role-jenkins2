@@ -81,8 +81,31 @@
     mode: 0444
   become: true
 
+- name: Read Jenkins Config File
+  slurp:
+    src: /var/lib/jenkins/config.xml
+  become: true
+  changed_when: false
+  register: slurp_jenkins_config
+
+- name: Determine Active Security Realm
+  set_fact:
+    # Yes, I'm parsing XML with a regex, and yes that's bad. But it's almost
+    # certainly "good enough" in this instance, so.
+    jenkins_active_security_realm: "{{ slurp_jenkins_config.content | b64decode | regex_replace('\n', '') | regex_replace('.*<securityRealm class=\"([^\"]+)\".*', '\\1') }}"
+
+- name: Determine Active Admin User
+  set_fact:
+    jenkins_active_admin_username: "{{ item | regex_replace('^[^:]+:', '') }}"
+  when: "item | match('^' + jenkins_active_security_realm + ':.*$')"
+  with_items: "{{ jenkins_admin_users }}"
+
+- name: Create Fact for Jenkins CLI Command
+  set_fact:
+    jenkins_cli_command: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}{{ '' if jenkins_active_security_realm == 'hudson.security.SecurityRealm$None' else ' -ssh -user ' + jenkins_active_admin_username }}"
+
 - name: Verify CLI
-  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} who-am-i"
+  shell: "{{ jenkins_cli_command }} who-am-i"
   register: cli_whoami
   become: true
   become_user: jenkins
