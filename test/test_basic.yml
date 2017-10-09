@@ -88,7 +88,7 @@
       become: true
       become_user: jenkins
       register: shell_jenkins_security
-      changed_when: "(shell_jenkins_security | succeeded) and 'Changed' not in shell_jenkins_security.stdout"
+      changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
     - name: Update Jenkins CLI Command
       set_fact:
         jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
