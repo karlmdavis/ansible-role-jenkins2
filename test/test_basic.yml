@@ -45,7 +45,54 @@
 # Install Jenkins.
 - hosts: docker_container
   roles:
-    - karlmdavis.jenkins2
+    - role: karlmdavis.jenkins2
+      jenkins_admin_users:
+        - hudson.security.HudsonPrivateSecurityRealm:test
+  tasks:
+    # Ensure that Jenkins has restarted, if it needs to.
+    - meta: flush_handlers
+    # Configure security, so that we can verify that things still work with it.
+    - name: Configure Security
+      shell:
+        cmd: |
+          cat <<EOF |
+          // These are the basic imports that Jenkin's interactive script console
+          // automatically includes.
+          import jenkins.*;
+          import jenkins.model.*;
+          import hudson.*;
+          import hudson.model.*;
+
+          def securityRealm = new hudson.security.HudsonPrivateSecurityRealm(false)
+          if(!securityRealm.equals(Jenkins.instance.getSecurityRealm())) {
+            Jenkins.instance.setSecurityRealm(securityRealm)
+
+            def testUser = securityRealm.createAccount("test", "supersecret")
+            testUser.addProperty(new hudson.tasks.Mailer.UserProperty("foo@example.com"));
+            testUser.addProperty(new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl("{{ jenkins_user_ssh_public_key }}"))
+            testUser.save()
+
+            Jenkins.instance.save()
+            println "Changed authentication."
+          }
+
+          def authorizationStrategy = new hudson.security.FullControlOnceLoggedInAuthorizationStrategy()
+          if(!authorizationStrategy.equals(Jenkins.instance.getAuthorizationStrategy())) {
+            authorizationStrategy.setAllowAnonymousRead(false)
+            Jenkins.instance.setAuthorizationStrategy(authorizationStrategy)
+            Jenkins.instance.save()
+            println "Changed authorization."
+          }
+          EOF
+          {{ jenkins_cli_command }} groovy =
+      become: true
+      become_user: jenkins
+      register: cli_test_script
+      changed_when: "'Changed' not in cli_test_script.stdout"
+    - name: Update Jenkins CLI Command
+      set_fact:
+        jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
+      when: "' -ssh -user test' not in jenkins_cli_command"
 
 # Verify that things worked as expected.
 - hosts: docker_container
@@ -68,3 +115,12 @@
     - name: Verify Jenkins Web UI Content
       action: fail
       when: jenkins_ui.content.find('Jenkins ver. 2') == -1
+
+    - name: Verify CLI Works with Security
+      # Can't just use jenkins_cli_command here, as it won't be correct if
+      # security was just configured.
+      command: "{{ jenkins_cli_command }} who-am-i"
+      become: true
+      become_user: jenkins
+      register: cli_test
+      changed_when: false

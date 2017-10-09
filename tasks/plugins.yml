@@ -10,13 +10,15 @@
 # https://github.com/ICTO/ansible-jenkins/blob/development/tasks/plugins.yml
 
 - name: List Plugins for Install
-  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} list-plugins | cut -f 1 -d ' '"
+  shell: "{{ jenkins_cli_command }} list-plugins | cut -f 1 -d ' '"
+  become: true
+  become_user: jenkins
   register: plugins_installed
   changed_when: false
 
 # FIXME: All of the plugins can be joined into a space-separated list and run in a single command.
 - name: Install Plugins
-  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} install-plugin {{ item }}"
+  shell: "{{ jenkins_cli_command }} install-plugin {{ item }}"
   when: item not in plugins_installed.stdout
   with_items:
     - "{{ jenkins_plugins_recommended }}"
@@ -27,12 +29,14 @@
     - "Restart Service 'jenkins'"
 
 - name: List Plugins for Update
-  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} list-plugins | grep ')$' | cut -f 1 -d ' ' | awk 1 ORS=' '"
+  shell: "{{ jenkins_cli_command }} list-plugins | grep ')$' | cut -f 1 -d ' ' | awk 1 ORS=' '"
+  become: true
+  become_user: jenkins
   register: plugins_updates
   changed_when: false
 
 - name: Update Plugins
-  shell: "java -jar /opt/jenkins/jenkins-cli.jar -s http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }} install-plugin {{ item }}"
+  shell: "{{ jenkins_cli_command }} install-plugin {{ item }}"
   with_items: "{{ plugins_updates.stdout.split() }}"
   when: plugins_updates.stdout != ''
   become: true
