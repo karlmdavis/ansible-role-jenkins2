@@ -2,12 +2,6 @@
 # This file is not included by default. It can be included via a task:
 # include: "packages_{{ ansible_os_family }}.yml"
 
-##
-# FIXME: Once Jenkins 2.0 is released, install all of this via their APT repo.
-# 
-# That will also install the dependencies automagically.
-##
-
 - name: Update APT Cache
   apt:
     update_cache: yes
@@ -18,8 +12,6 @@
   apt: name={{ item }} state=installed
   become: true
   with_items:
-    # The uri module requires httplib2, prior to Ansible 2.1.
-    - python-httplib2
     # Allows running tasks as unprivileged users, which we need to do when running Jenkins CLI.
     # Reference: https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
     - acl
