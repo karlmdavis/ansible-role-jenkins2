@@ -1,7 +1,4 @@
 ---
-# This file is not included by default. It can be included via a task:
-# include: "plugins_{{ ansible_os_family }}.yml"
-
 # Installs the "standard" Jenkins 2.0 plugins, as well as any additional that 
 # are specified in the 'plugins_extra' variable.
 

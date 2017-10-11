@@ -1,7 +1,4 @@
 ---
-# This file is not included by default. It can be included via a task:
-# include: "cli_config_{{ ansible_os_family }}.yml"
-
 # Enables the Jenkins CLI and configures the 'admin' account so that it can be
 # used to connect to the CLI.
 

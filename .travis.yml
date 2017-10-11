@@ -25,7 +25,7 @@ env:
 matrix:
   include:
     - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
-    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.0.2.0"
+    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.4.0.0"
     - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_14_04 ANSIBLE_SPEC="ansible"
     # Testing against CentOS would also (mostly) cover RHEL 7.
     #- env: TEST_PLAY=basic_test.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"

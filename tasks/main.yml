@@ -1,10 +1,10 @@
 ---
 
 # Configure the service's launch options.
-- include: "service_config_{{ ansible_os_family }}.yml"
+- include_tasks: "service_config_{{ ansible_os_family }}.yml"
 
 # Install all OS packages (including Jenkins itself).
-- include: "packages_{{ ansible_os_family }}.yml"
+- include_tasks: "packages_{{ ansible_os_family }}.yml"
 
 - name: Create Jenkins Init Script Directory
   # Reference: https://wiki.jenkins-ci.org/display/JENKINS/Post-initialization+script
@@ -28,10 +28,10 @@
     - "Restart Service 'jenkins'"
 
 # Enable the Jenkins CLI.
-- include: "cli_config.yml"
+- import_tasks: "cli_config.yml"
 
 # Install and/or update plugins.
-- include: "plugins.yml"
+- import_tasks: "plugins.yml"
 
 - name: Ensure Service 'jenkins' Is Running
   service:

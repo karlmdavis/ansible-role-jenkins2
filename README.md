@@ -8,7 +8,7 @@ This [Ansible](https://www.ansible.com/) role can be used to install and manage 
 Requirements
 ------------
 
-This role requires Ansible 2.0 or later.
+This role requires Ansible 2.4 or later, with either Ansible pipelining available or `setfacl` available on the system being managed (per [Becoming an Unprivileged User](http://docs.ansible.com/ansible/latest/become.html#becoming-an-unprivileged-user)).
 
 Role Variables
 --------------
@@ -49,12 +49,13 @@ This role can be installed, as follows:
 
 This role can be applied, as follows:
 
-    - hosts: servers
-      vars:
-        jenkins_plugins_extra:
-          - github-oauth
-      roles:
-         - ansible-jenkins2
+    - hosts: some_box
+      tasks:
+        - import_role:
+            name: karlmdavis.ansible-jenkins2
+          vars:
+            jenkins_plugins_extra:
+              - github-oauth
 
 License
 -------

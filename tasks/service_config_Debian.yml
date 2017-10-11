@@ -1,7 +1,4 @@
 ---
-# This file is not included by default. It can be included via a task:
-# include: "service_config_{{ ansible_os_family }}.yml"
-
 # Can't use `lineinfile`, because the setup wizard has to be disabled before
 # Jenkins is installed. So, instead, template entire file.
 - name: Configure Jenkins Launch Settings
