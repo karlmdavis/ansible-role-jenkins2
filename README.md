@@ -49,13 +49,92 @@ This role can be installed, as follows:
 
 This role can be applied, as follows:
 
-    - hosts: some_box
-      tasks:
-        - import_role:
-            name: karlmdavis.ansible-jenkins2
-          vars:
-            jenkins_plugins_extra:
-              - github-oauth
+```yaml
+- hosts: some_box
+  tasks:
+    - import_role:
+        name: karlmdavis.ansible-jenkins2
+      vars:
+        jenkins_plugins_extra:
+          - github-oauth
+```
+
+## Using the Jenkins CLI
+
+After installing Jenkins, the Jenkins CLI that it installs can also be used to further customize Jenkins.
+
+For example, here's how to install Jenkins and then configure Jenkins to use its `HudsonPrivateSecurityRealm`, for local Jenkins accounts:
+
+```yaml
+- hosts: some_box
+  tasks:
+
+    - import_role:
+        name: karlmdavis.ansible-jenkins2
+      vars:
+        jenkins_admin_users:
+          # Won't be required on first run, but will ensure that tasks using the
+          # CLI function on subsequent playbook executions.
+          - hudson.security.HudsonPrivateSecurityRealm:test
+
+    # Ensure that Jenkins has restarted, if it needs to.
+    - meta: flush_handlers
+
+    # Configure security to use Jenkins-local accounts.
+    - name: Configure Security
+      shell:
+        # We use a HEREDOC to pass in a templated Groovy script. Note the CLI
+        # command at the end uses an "=" sign, specifying that Jenkins' CLI
+        # will read the Groovy script from STDIN.
+        cmd: |
+          cat <<EOF |
+          // These are the basic imports that Jenkin's interactive script console
+          // automatically includes.
+          import jenkins.*;
+          import jenkins.model.*;
+          import hudson.*;
+          import hudson.model.*;
+
+          // Configure the security realm, which handles authentication.
+          def securityRealm = new hudson.security.HudsonPrivateSecurityRealm(false)
+          if(!securityRealm.equals(Jenkins.instance.getSecurityRealm())) {
+            Jenkins.instance.setSecurityRealm(securityRealm)
+
+            // Create a user to login with. Ensure that user is bound to the
+            // system-local `jenkins` user's SSH key, to ensure that this
+            // account can be used with Jenkins' CLI.
+            def testUser = securityRealm.createAccount("test", "supersecret")
+            testUser.addProperty(new hudson.tasks.Mailer.UserProperty("foo@example.com"));
+            testUser.addProperty(new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl("{{ jenkins_user_ssh_public_key }}"))
+            testUser.save()
+
+            Jenkins.instance.save()
+            println "Changed authentication."
+          }
+
+          // Configure the authorization strategy, which specifies who can do
+          // what.
+          def authorizationStrategy = new hudson.security.FullControlOnceLoggedInAuthorizationStrategy()
+          if(!authorizationStrategy.equals(Jenkins.instance.getAuthorizationStrategy())) {
+            authorizationStrategy.setAllowAnonymousRead(false)
+            Jenkins.instance.setAuthorizationStrategy(authorizationStrategy)
+            Jenkins.instance.save()
+            println "Changed authorization."
+          }
+          EOF
+          {{ jenkins_cli_command }} groovy =
+      become: true
+      become_user: jenkins
+      register: shell_jenkins_security
+      changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
+
+    # This variable has to be updated if later tasks in the same playbook
+    # execution will use the Jenkins CLI.
+    - name: Update Jenkins CLI Command
+      set_fact:
+        jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
+      when: "' -ssh -user test' not in jenkins_cli_command"
+```
 
 License
 -------
