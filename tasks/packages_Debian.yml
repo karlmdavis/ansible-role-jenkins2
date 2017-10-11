@@ -1,7 +1,4 @@
 ---
-# This file is not included by default. It can be included via a task:
-# include: "packages_{{ ansible_os_family }}.yml"
-
 - name: Update APT Cache
   apt:
     update_cache: yes
@@ -12,9 +9,6 @@
   apt: name={{ item }} state=installed
   become: true
   with_items:
-    # Allows running tasks as unprivileged users, which we need to do when running Jenkins CLI.
-    # Reference: https://docs.ansible.com/ansible/become.html#becoming-an-unprivileged-user
-    - acl
     # Allows use of HTTPS APT repos.
     - apt-transport-https
 

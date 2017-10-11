@@ -3,9 +3,9 @@
 # Installs and verifies Jenkins on the container being used for the test case.
 ##
 
-# Prepare to install Java 8 (depending on OS, may not need to do anything).
 - hosts: docker_container
   tasks:
+    # Prepare to install Java 8 (depending on OS, may not need to do anything).
     - block:
       - name: Add the webupd8team/java PPA for Ubuntu 14.04
         apt_repository:
@@ -23,32 +23,34 @@
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '14.04'
-
-# Install Java 8.
-- hosts: docker_container
-  become: true
-  roles:
     # Have to use Oracle's JDK on Ubuntu 14.04, as OpenJDK wasn't working
     # correctly with ca-certificates-java (the 
     # `/etc/ca-certificates/update.d/jks-keystore` script was hanging).
-    - role: geerlingguy.java
-      java_packages: ['oracle-java8-installer']
+    - import_role:
+        name: geerlingguy.java
+      vars:
+        java_packages: ['oracle-java8-installer']
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '14.04'
-    - role: geerlingguy.java
-      java_packages: ['openjdk-8-jdk']
+      become: true
+    - import_role:
+        name: geerlingguy.java
+      vars:
+        java_packages: ['openjdk-8-jdk']
       when:
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '16.04'
+      become: true
 
 # Install Jenkins.
 - hosts: docker_container
-  roles:
-    - role: karlmdavis.jenkins2
-      jenkins_admin_users:
-        - hudson.security.HudsonPrivateSecurityRealm:test
   tasks:
+    - import_role:
+        name: karlmdavis.jenkins2
+      vars:
+        jenkins_admin_users:
+          - hudson.security.HudsonPrivateSecurityRealm:test
     # Ensure that Jenkins has restarted, if it needs to.
     - meta: flush_handlers
     # Configure security, so that we can verify that things still work with it.

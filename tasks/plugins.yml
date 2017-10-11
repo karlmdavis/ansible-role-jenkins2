@@ -1,13 +1,33 @@
 ---
-# This file is not included by default. It can be included via a task:
-# include: "plugins_{{ ansible_os_family }}.yml"
-
 # Installs the "standard" Jenkins 2.0 plugins, as well as any additional that 
 # are specified in the 'plugins_extra' variable.
 
 # The (rather brilliant and arcane) "Should This Plugin Be Installed?" and 
 # "Should This Plugin Be Updated?" logic is taken from here:
 # https://github.com/ICTO/ansible-jenkins/blob/development/tasks/plugins.yml
+
+- name: Refresh Update Center
+  shell:
+    cmd: |
+      cat <<EOF |
+      // These are the basic imports that Jenkin's interactive script console 
+      // automatically includes.
+      import jenkins.*;
+      import jenkins.model.*;
+      import hudson.*;
+      import hudson.model.*;
+
+      // Out of the box, Jenkins has no Update Center metadata, and so the CLI's
+      // 'install-plugins' command will fail. This script pulls that data.
+      def updateCenter = Jenkins.instance.updateCenter
+      def result = updateCenter.updateAllSites()
+      EOF
+      {{ jenkins_cli_command }} groovy =
+  become: true
+  become_user: jenkins
+  # This isn't a material change (by itself), so we don't count it, even though
+  # it runs every time.
+  changed_when: false
 
 - name: List Plugins for Install
   shell: "{{ jenkins_cli_command }} list-plugins | cut -f 1 -d ' '"
