@@ -2,17 +2,6 @@
 # Enables the Jenkins CLI and configures the 'admin' account so that it can be
 # used to connect to the CLI.
 
-- name: Jenkins Script - Configure Slave Agent Port
-  template:
-    src: slaveAgentPort.groovy
-    dest: /var/lib/jenkins/init.groovy.d/slaveAgentPort.groovy
-    owner: jenkins
-    group: jenkins
-    mode: 0744
-  become: true
-  notify:
-    - "Restart Service 'jenkins'"
-
 - name: Generate SSH Keys for jenkins Service Account
   user:
     name: jenkins
@@ -28,10 +17,10 @@
 - name: Parse SSH Public Key for jenkins Service Account
   set_fact: jenkins_user_ssh_public_key="{{ jenkins_user_ssh_public_file.stdout_lines[0] }}"
 
-- name: Jenkins Script - Configure SSH Keys for admin
+- name: Jenkins Init Script - Enable sshd
   template:
-    src: adminSshKeys.groovy
-    dest: /var/lib/jenkins/init.groovy.d/adminSshKeys.groovy
+    src: configureSshd.groovy.j2
+    dest: /var/lib/jenkins/init.groovy.d/configureSshd.groovy
     owner: jenkins
     group: jenkins
     mode: 0744
@@ -39,20 +28,8 @@
   notify:
     - "Restart Service 'jenkins'"
 
-- name: Jenkins Script - Refresh Update Center
-  template:
-    src: updateCenterRefresh.groovy
-    dest: /var/lib/jenkins/init.groovy.d/updateCenterRefresh.groovy
-    owner: jenkins
-    group: jenkins
-    mode: 0744
-  become: true
-  notify:
-    - "Restart Service 'jenkins'"
-
-# Fire any pending restart handlers now, as all of the above scripts will not 
-# be run until Jenkins restarts, and are required in order for the CLI-using
-# tasks below to work.
+# Fire any pending restart handlers now, as we need `configureSshd.groovy` to
+# have run, or else the CLI may not be enabled.
 - meta: flush_handlers
 
 # At this point (once the service is restarted), the CLI itself should be usable
