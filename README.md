@@ -10,6 +10,8 @@ Requirements
 
 This role requires Ansible 2.4 or later, with either Ansible pipelining available or `setfacl` available on the system being managed (per [Becoming an Unprivileged User](http://docs.ansible.com/ansible/latest/become.html#becoming-an-unprivileged-user)).
 
+The role currently supports Ubuntu 14.04 (Trusty) and Ubuntu 16.04 (Xenial), though contributtions for additional platform support are welcome!
+
 Role Variables
 --------------
 
