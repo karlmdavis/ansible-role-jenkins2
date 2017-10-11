@@ -85,9 +85,7 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
     # Configure security to use Jenkins-local accounts.
     - name: Configure Security
       shell:
-        # We use a HEREDOC to pass in a templated Groovy script. Note the CLI
-        # command at the end uses an "=" sign, specifying that Jenkins' CLI
-        # will read the Groovy script from STDIN.
+        # We use a here document to pass in a templated Groovy script.
         cmd: |
           cat <<EOF |
           // These are the basic imports that Jenkin's interactive script console
@@ -124,6 +122,9 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
             println "Changed authorization."
           }
           EOF
+          # Note the CLI command here uses an "=" sign as the argument for the
+          # script to be run, which the Jenkins' CLI interprets as a directive
+          # to read the script from STDIN.
           {{ jenkins_cli_command }} groovy =
       become: true
       become_user: jenkins
