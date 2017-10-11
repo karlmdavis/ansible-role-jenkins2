@@ -13,47 +13,27 @@ This role requires Ansible 2.0 or later.
 Role Variables
 --------------
 
-Available variables are listed below, along with default values (see [defaults/main.yml](defaults/main.yml)):
+This role supports the following variables, listed here with their default values from [defaults/main.yml](defaults/main.yml):
 
-    # Install the LTS releases (as opposed to 'weekly').
-    jenkins_release_line: 'long_term_support'
-
-This value can be overridden to change which Jenkins release line will be installed.
-
-    # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
-    jenkins_port: 8080
-
-Override this variable to set the port that Jenkins will run on.
-
-    # The context path that Jenkins will be hosted at, e.g. '/foo' in 
-    # 'http://localhost:8080/foo'. Leave as '' to host at root path.
-    jenkins_context_path: ''
-
-Override this variable if Jenkins needs to be hosted at a context path/prefix other than the root (default).
-
-    # The external URL that users will use to access Jenkins. Gets set in the
-    # Jenkins config and used in emails, webhooks, etc.
-    # If this is left empty/None, the configuration will not be set and Jenkins
-    # will try to auto-discover this (which won't work correctly if it's proxied).
-    jenkins_url_external: ''
-
-Override this variable if Jenkins is running behind a proxy or if users will be accessing it via something other than the system's hostname. It will ensure that links in emails and whatnot are correct.
-
-    jenkins_admin_users:
-      - 'hudson.security.HudsonPrivateSecurityRealm:admin'
-
-Override this variable to support an alternative authorization system (i.e.  security realm). Note that this doesn't install/configure that realm, it's just needed to ensure that the Jenkins CLI can still be used once you've activated the realm. For example, if you're using the [GitHub OAuth plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)'s security realm, you would add an extra entry such as "`org.jenkinsci.plugins.GithubSecurityRealm:your_github_user_id`" as the first element in this list (and leave the `admin` entry, too).
-
-    # The additional plugins that users of this role would like to be installed 
-    # (must be overridden).
-    jenkins_plugins_extra: []
-
-Override this variable to install additional Jenkins plugins. These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
-
-    # Additional options that will be added to JAVA_ARGS
-    jenkins_java_args_extra: ''
-
-Override this variable to define extra arguments that will be added to the "`JAVA_ARGS`" environmnet variable used by Jenkins, such as the JVM memory settings, e.g. `-Xmx4g`.
+* `jenkins_release_line`: `'long_term_support'`
+    * When set to `long_term_support`, the role will install the LTS releases of Jenkins.
+    * When set to `weekly`, the role will install the weekly releases of Jenkins.
+* `jenkins_port`: `8080`
+    * The port that Jenkins will run on, for HTTP requests.
+    * On most systems, this value will need to be over 1024, as Jenkins is not run as `root`.
+* `jenkins_context_path`: `''`
+    * The context path that Jenkins will be hosted at, e.g. `/foo` in `http://localhost:8080/foo`. Leave as `''` to host at root path.
+* `jenkins_url_external`: `''`
+    * The external URL that users will use to access Jenkins. Gets set in the Jenkins config and used in emails, webhooks, etc.
+    * If this is left empty/None, the configuration will not be set and Jenkins will try to auto-discover this (which won't work correctly if it's proxied).
+* `jenkins_admin_users`: `['hudson.security.HudsonPrivateSecurityRealm:admin']`
+    * Override this variable to support an alternative authorization system (i.e.  security realm). Note that this doesn't install/configure that realm, it's just needed to ensure that the Jenkins CLI can still be used once you've activated the realm.
+    * For example, if you're using the [GitHub OAuth plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)'s security realm, you would add an extra entry such as "`org.jenkinsci.plugins.GithubSecurityRealm:your_github_user_id`" as the first element in this list (and leave the `admin` entry, too).
+* `jenkins_plugins_extra`: `[]`
+    * Override this variable to install additional Jenkins plugins.
+    * These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
+* `jenkins_java_args_extra`: `''`
+    * Additional options that will be added to `JAVA_ARGS` for the Jenkins process, such as the JVM memory settings, e.g. `-Xmx4g`.
 
 Dependencies
 ------------
