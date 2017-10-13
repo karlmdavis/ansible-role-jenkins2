@@ -57,7 +57,6 @@
   become_user: jenkins
   register: shell_jenkins_config_misc
   changed_when: "(shell_jenkins_config_misc | success) and 'Changed' not in shell_jenkins_config_misc.stdout"
-- debug: var=shell_jenkins_config_misc
 
 # Fire any pending restart handlers now, or else the tests below here may not
 # be valid.
