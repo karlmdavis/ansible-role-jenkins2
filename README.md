@@ -28,6 +28,7 @@ This role supports the following variables, listed here with their default value
 * `jenkins_url_external`: `''`
     * The external URL that users will use to access Jenkins. Gets set in the Jenkins config and used in emails, webhooks, etc.
     * If this is left empty/None, the configuration will not be set and Jenkins will try to auto-discover this (which won't work correctly if it's proxied).
+    * If you set this, chances are that you'll also need to set jenkins_java_args_extra` to also include `-Dorg.jenkinsci.main.modules.sshd.SSHD.hostName=localhost` in order for the CLI (and this role) to work.
 * `jenkins_admin_users`: `['hudson.security.HudsonPrivateSecurityRealm:admin']`
     * Override this variable to support an alternative authorization system (i.e.  security realm). Note that this doesn't install/configure that realm, it's just needed to ensure that the Jenkins CLI can still be used once you've activated the realm.
     * For example, if you're using the [GitHub OAuth plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)'s security realm, you would add an extra entry such as "`org.jenkinsci.plugins.GithubSecurityRealm:your_github_user_id`" as the first element in this list (and leave the `admin` entry, too).
