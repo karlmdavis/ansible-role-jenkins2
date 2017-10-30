@@ -23,6 +23,7 @@ fi
 source venv/bin/activate
 
 # Install Ansible into the venv.
+pip install --upgrade setuptools
 pip install "${ANSIBLE_SPEC}"
 
 # Install any requirements needed by the role or its tests.
