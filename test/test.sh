@@ -13,10 +13,10 @@ cd "${SCRIPT_DIR}"
 source venv/bin/activate
 
 # Basic role syntax check
-ansible-playbook test_basic.yml --inventory=inventory --syntax-check
+ansible-playbook $TEST_PLAY --inventory=inventory --syntax-check
 
 # Run the Ansible test case.
-ansible-playbook test_basic.yml --inventory=inventory
+ansible-playbook $TEST_PLAY --inventory=inventory
 
 # Run the role/playbook again, checking to make sure it's idempotent.
 ansible-playbook $TEST_PLAY --inventory=inventory \

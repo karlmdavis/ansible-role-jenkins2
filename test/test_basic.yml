@@ -42,6 +42,13 @@
         - ansible_distribution == 'Ubuntu'
         - ansible_distribution_version == '16.04'
       become: true
+    - import_role:
+        name: geerlingguy.java
+      vars:
+        java_packages: ['java-1.8.0-openjdk']
+      when:
+        - ansible_os_family == 'RedHat'
+      become: true
 
 # Install Jenkins.
 - hosts: docker_container
