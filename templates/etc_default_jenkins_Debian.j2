@@ -33,7 +33,7 @@ JENKINS_GROUP=$NAME
 JENKINS_WAR=/usr/share/$NAME/$NAME.war
 
 # jenkins home location
-JENKINS_HOME=/var/lib/$NAME
+JENKINS_HOME={{ jenkins_home }}
 
 # set this to false if you don't want Jenkins to run by itself
 # in this set up, you are expected to provide a servlet container

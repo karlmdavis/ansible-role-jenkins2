@@ -9,6 +9,13 @@
 # backwards compatible with earlier versions of this role.
 jenkins_release_line: 'weekly'
 
+# The directory that will be used as the home directory for the Jenkins service
+# account. Cannot be modified, due to limitations in the Jenkins installers.
+jenkins_home_default: '/var/lib/jenkins'
+
+# The location that will be used to store the Jenkins configuration and data.
+jenkins_home: "{{ jenkins_home_default }}"
+
 # Jenkins doesn't (and shouldn't) run as root, so this must be over 1024.
 jenkins_port: 8080
 

@@ -51,7 +51,8 @@ after_script:
   # Inspect the Docker container a bit post-test. Just to aid in debugging.
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /opt/jenkins
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins
-  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins/init.groovy.d
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins-not-default
+  - docker exec ${CONTAINER_PREFIX}.${PLATFORM} ls -la /var/lib/jenkins-not-default/init.groovy.d
   - docker exec ${CONTAINER_PREFIX}.${PLATFORM} cat /var/log/jenkins/jenkins.log
 
   # Clean up after the test.

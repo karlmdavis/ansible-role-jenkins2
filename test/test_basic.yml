@@ -56,6 +56,10 @@
     - import_role:
         name: karlmdavis.jenkins2
       vars:
+        # Just setting something here so we can verify it's working.
+        jenkins_home: /var/lib/jenkins-not-default
+
+        # This test user gets created below.
         jenkins_admin_users:
           - hudson.security.HudsonPrivateSecurityRealm:test
     # Ensure that Jenkins has restarted, if it needs to.

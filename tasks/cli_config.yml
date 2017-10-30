@@ -9,7 +9,7 @@
   become: true
 
 - name: Read SSH Public Key for jenkins Service Account
-  shell: cat /var/lib/jenkins/.ssh/id_rsa.pub
+  shell: "cat {{ jenkins_home_default }}/.ssh/id_rsa.pub"
   become: true
   changed_when: false
   register: jenkins_user_ssh_public_file
@@ -20,7 +20,7 @@
 - name: Jenkins Init Script - Enable sshd
   template:
     src: configureSshd.groovy.j2
-    dest: /var/lib/jenkins/init.groovy.d/configureSshd.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/configureSshd.groovy"
     owner: jenkins
     group: jenkins
     mode: 0744
@@ -57,7 +57,7 @@
 
 - name: Read Jenkins Config File
   slurp:
-    src: /var/lib/jenkins/config.xml
+    src: "{{ jenkins_home }}/config.xml"
   become: true
   changed_when: false
   register: slurp_jenkins_config
