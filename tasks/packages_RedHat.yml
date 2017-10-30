@@ -48,5 +48,7 @@
       line: "JENKINS_JAVA_OPTIONS=\"-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false {{ jenkins_java_args_extra }}\""
     - regexp: '^JENKINS_PORT='
       line: "JENKINS_PORT={{ jenkins_port }}"
+    - regexp: '^JENKINS_HOME='
+      line: "JENKINS_HOME=\"{{ jenkins_home }}\""
   notify:
     - "Restart Service 'jenkins'"

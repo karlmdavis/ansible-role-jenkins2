@@ -20,6 +20,9 @@ This role supports the following variables, listed here with their default value
 * `jenkins_release_line`: `'long_term_support'`
     * When set to `long_term_support`, the role will install the LTS releases of Jenkins.
     * When set to `weekly`, the role will install the weekly releases of Jenkins.
+* `jenkins_home`: `/var/lib/jenkins`
+    * The directory that (most of) Jenkins data will be stored.
+    * Due to limitations of the Jenkins installer, the `jenkins` service account will still use the default as its home directory. This should really only come into play for SSH keys.
 * `jenkins_port`: `8080`
     * The port that Jenkins will run on, for HTTP requests.
     * On most systems, this value will need to be over 1024, as Jenkins is not run as `root`.
