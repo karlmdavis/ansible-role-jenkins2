@@ -1,8 +1,5 @@
 ---
 
-# Configure the service's launch options.
-- include_tasks: "service_config_{{ ansible_os_family }}.yml"
-
 # Install all OS packages (including Jenkins itself).
 - include_tasks: "packages_{{ ansible_os_family }}.yml"
 

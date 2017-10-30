@@ -26,14 +26,14 @@ STOPSIGNAL SIGRTMIN+3
 #
 # * <https://stackoverflow.com/questions/18173889/cannot-access-centos-sshd-on-docker>
 RUN yum update -y
-RUN yum install -y openssh-server sudo
+RUN yum install -y openssh-server sudo initscripts
 RUN /usr/bin/systemctl enable sshd
 RUN /usr/bin/systemctl enable systemd-user-sessions.service
 
 # Create the SSH user.
-RUN useradd ansible_test -G wheel
+RUN useradd ansible_test
 RUN echo 'ansible_test:secret' | chpasswd
-RUN echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo 'ansible_test ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 VOLUME [ "/sys/fs/cgroup" ]
 EXPOSE 22
