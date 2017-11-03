@@ -53,6 +53,8 @@
     owner: jenkins
     group: jenkins
     mode: 0444
+  environment:
+    no_proxy: localhost
   become: true
 
 - name: Read Jenkins Config File

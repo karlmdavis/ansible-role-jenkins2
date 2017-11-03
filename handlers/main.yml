@@ -20,6 +20,8 @@
   uri:
     url: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path | default('') }}/login"
     status_code: 200
+  environment:
+    no_proxy: localhost
   register: jenkins_login_page
   until: jenkins_login_page.status == 200
   retries: 60

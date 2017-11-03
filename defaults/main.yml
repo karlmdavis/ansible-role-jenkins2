@@ -73,3 +73,7 @@ jenkins_plugins_extra: []
 
 # Additional options that will be added to JAVA_ARGS
 jenkins_java_args_extra: ''
+
+# This should only be modified if operating in a restricted Internet
+# environment, such that not all of the Jenkins mirrors will be accessible.
+jenkins_downloads_url_root: 'https://pkg.jenkins.io'
