@@ -54,5 +54,7 @@
       line: "JENKINS_PORT={{ jenkins_port }}"
     - regexp: '^JENKINS_HOME='
       line: "JENKINS_HOME=\"{{ jenkins_home }}\""
+    - regexp: '^JENKINS_ARGS='
+      line: "JENKINS_ARGS=\"--prefix={{ jenkins_context_path }}\""
   notify:
     - "Restart Service 'jenkins'"
