@@ -6,7 +6,7 @@
 - name: Determine YUM Repo to Use
   set_fact:
     jenkins_yum_repo_name: "{{ 'Jenkins' if jenkins_release_line == 'weekly' else 'Jenkins-stable' }}"
-    jenkins_yum_repo_baseurl: "{{ %s/%s' % (jenkins_downloads_url_root, jenkins_downloads_url_directory) }}"
+    jenkins_yum_repo_baseurl: "{{ '%s/%s' % (jenkins_downloads_url_root, jenkins_downloads_url_directory) }}"
     jenkins_yum_repo_gpgkey: "{{ '%s/%s/jenkins.io.key' % (jenkins_downloads_url_root, jenkins_downloads_url_directory) }}"
 
 - name: Remove Unused Jenkins YUM Repositories
