@@ -71,6 +71,9 @@
           cat <<EOF |
           // These are the basic imports that Jenkins interactive script console
           // automatically includes.
+
+          // This is a comment with an ummatched apostrophe: '.
+
           import jenkins.*;
           import jenkins.model.*;
           import hudson.*;

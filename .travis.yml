@@ -24,11 +24,7 @@ env:
 # Each list item here will be run as a separate test by Travis CI.
 matrix:
   include:
-    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible"
-    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.4.0.0"
-    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_14_04 ANSIBLE_SPEC="ansible"
-    # Testing against CentOS also (mostly) covers RHEL 7.
-    - env: TEST_PLAY=test_basic.yml PLATFORM=centos_7 ANSIBLE_SPEC="ansible"
+    - env: TEST_PLAY=test_basic.yml PLATFORM=ubuntu_16_04 ANSIBLE_SPEC="ansible==2.4.1.0"
 
 install:
   # Generate an SSH key for use when connecting to Docker containers.
