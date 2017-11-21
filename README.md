@@ -17,7 +17,7 @@ Role Variables
 
 This role supports the following variables, listed here with their default values from [defaults/main.yml](defaults/main.yml):
 
-* `jenkins_release_line`: `'long_term_support'`
+* `jenkins_release_line`: `'weekly'`
     * When set to `long_term_support`, the role will install the LTS releases of Jenkins.
     * When set to `weekly`, the role will install the weekly releases of Jenkins.
 * `jenkins_home`: `/var/lib/jenkins`
