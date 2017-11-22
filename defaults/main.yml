@@ -74,6 +74,15 @@ jenkins_plugins_extra: []
 # Additional options that will be added to JAVA_ARGS
 jenkins_java_args_extra: ''
 
-# This should only be modified if operating in a restricted Internet
-# environment, such that not all of the Jenkins mirrors will be accessible.
-jenkins_downloads_url_root: 'https://pkg.jenkins.io'
+##
+# These should only be modified if custom/local mirrors of the YUM, APT, and/or
+# plugins repositories are being used.
+##
+
+# The base URL of the custom YUM/APT repo to be used (the portion that's shared
+# by the signing key and packages).
+jenkins_packages_url_base: 'https://pkg.jenkins.io'
+
+# Set to `true` to add a `proxy: _none_` setting for the YUM repo.
+jenkins_packages_repo_yum_disable_proxy: false
+
