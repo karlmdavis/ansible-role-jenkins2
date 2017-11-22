@@ -12,18 +12,18 @@
     # Allows use of HTTPS APT repos.
     - apt-transport-https
 
-- name: Determine APT URL to Use
+- name: Determine APT Key and Repo to Use (Step 1)
   set_fact:
-    jenkins_downloads_url_directory: "{{ 'debian' if jenkins_release_line == 'weekly' else 'debian-stable' }}"
+    jenkins_apt_repo_flavor: "{{ 'debian' if jenkins_release_line == 'weekly' else 'debian-stable' }}"
 
-- name: Determine APT Key and Repo to Use
+- name: Determine APT Key and Repo to Use (Step 2)
   set_fact:
-    jenkins_apt_key: "{{ '%s/%s/jenkins.io.key' % (jenkins_downloads_url_root, jenkins_downloads_url_directory) }}"
-    jenkins_apt_repo: "{{ 'deb %s/%s binary/' % (jenkins_downloads_url_root, jenkins_downloads_url_directory) }}"
+    jenkins_apt_key_url: "{{ '%s/%s/jenkins.io.key' % (jenkins_packages_url_base, jenkins_apt_repo_flavor) }}"
+    jenkins_apt_repo: "{{ 'deb %s/%s binary/' % (jenkins_packages_url_base, jenkins_apt_repo_flavor) }}"
 
 - name: Add Jenkins APT Key
   apt_key:
-    url: "{{ jenkins_apt_key }}"
+    url: "{{ jenkins_apt_key_url }}"
     state: present
   become: true
 
