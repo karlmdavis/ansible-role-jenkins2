@@ -79,11 +79,11 @@
       def agentProtocolWasDisabled = false
       def agentProtocolNames = new HashSet(Jenkins.instance.getAgentProtocols())
       jenkins.AgentProtocol.all().each { agentProtocol ->
-          println "Checking: ${agentProtocol.name}"
+          println "Checking: " + agentProtocol.name
           if (agentProtocol.isDeprecated() && agentProtocolNames.contains(agentProtocol.name)) {
               agentProtocolNames.remove(agentProtocol.name)
               agentProtocolWasDisabled = true
-              println "Changed protocols: removed protocol '${agentProtocol.name}'."
+              println "Changed protocols: removed protocol: " + agentProtocol.name
           }
       }
       if (agentProtocolWasDisabled) {
@@ -91,7 +91,7 @@
         Jenkins.instance.save()
       }
 
-      // Enable agent-->master access control, as it's strongly recommended.
+      // Enable agent-master access control, as its strongly recommended.
       // References:
       // * <https://jenkins.io/redirect/security-144/>
       // * <https://stackoverflow.com/a/41588568/1851299>
@@ -101,7 +101,7 @@
         println "Changed agent-master access control: now disabled."
       }
 
-      // Enable CSRF, as it's strongly recommended.
+      // Enable CSRF, as its strongly recommended.
       // Reference: <https://wiki.jenkins.io/display/JENKINS/CSRF+Protection>
       if (Jenkins.instance.getCrumbIssuer() == null ) {
         Jenkins.instance.setCrumbIssuer(new hudson.security.csrf.DefaultCrumbIssuer(true))
@@ -112,8 +112,8 @@
       {{ jenkins_cli_command }} groovy =
   become: true
   become_user: jenkins
-  register: shell_jenkins_security
-  changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
+  register: shell_jenkins_security_recommendations
+  changed_when: "(shell_jenkins_security_recommendations | success) and 'Changed' in shell_jenkins_security_recommendations.stdout"
 
 # Fire any pending restart handlers now, or else the tests below here may not
 # be valid.
