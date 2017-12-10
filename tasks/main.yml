@@ -76,15 +76,18 @@
 
       // Disable deprecated agent protocols.
       // Reference: <https://github.com/jenkinsci/jenkins/commit/efdd52e9e78cc057ea49a7d338ee575d131c1959>
-      def agentProtocols = jenkins.AgentProtocol.all()
       def agentProtocolWasDisabled = false
-      agentProtocols.each { agentProtocol ->
-          if (agentProtocol.isDeprecated()) {
-              agentProtocols.remove(agentProtocol)
+      def agentProtocolNames = new HashSet(Jenkins.instance.getAgentProtocols())
+      jenkins.AgentProtocol.all().each { agentProtocol ->
+          println "Checking: ${agentProtocol.name}"
+          if (agentProtocol.isDeprecated() && agentProtocolNames.contains(agentProtocol.name)) {
+              agentProtocolNames.remove(agentProtocol.name)
+              agentProtocolWasDisabled = true
               println "Changed protocols: removed protocol '${agentProtocol.name}'."
           }
       }
       if (agentProtocolWasDisabled) {
+        Jenkins.instance.setAgentProtocols(agentProtocolNames)
         Jenkins.instance.save()
       }
 
