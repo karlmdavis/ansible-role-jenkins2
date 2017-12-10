@@ -55,6 +55,63 @@
   register: shell_jenkins_config_misc
   changed_when: "(shell_jenkins_config_misc | success) and 'Changed' not in shell_jenkins_config_misc.stdout"
 
+- name: Configure Security Recommendations
+  shell:
+    cmd: |
+      cat <<EOF |
+      // These are the basic imports that Jenkins interactive script console
+      // automatically includes.
+      import jenkins.*;
+      import jenkins.model.*;
+      import hudson.*;
+      import hudson.model.*;
+
+      // Disable CLI remoting, as its insecure and Jenkins yells about it.
+      // Reference: <://support.cloudbees.com/hc/en-us/articles/234709648-Disable-Jenkins-CLI>
+      if (Jenkins.instance.getDescriptor("jenkins.CLI").get().isEnabled()) {
+        Jenkins.instance.getDescriptor("jenkins.CLI").get().setEnabled(false)
+        Jenkins.instance.save()
+        println "Changed CLI remoting: now disabled."
+      }
+
+      // Disable deprecated agent protocols.
+      // Reference: <https://github.com/jenkinsci/jenkins/commit/efdd52e9e78cc057ea49a7d338ee575d131c1959>
+      def agentProtocols = jenkins.AgentProtocol.all()
+      def agentProtocolWasDisabled = false
+      agentProtocols.each { agentProtocol ->
+          if (agentProtocol.isDeprecated()) {
+              agentProtocols.remove(agentProtocol)
+              println "Changed protocols: removed protocol '${agentProtocol.name}'."
+          }
+      }
+      if (agentProtocolWasDisabled) {
+        Jenkins.instance.save()
+      }
+
+      // Enable agent-->master access control, as it's strongly recommended.
+      // References:
+      // * <https://jenkins.io/redirect/security-144/>
+      // * <https://stackoverflow.com/a/41588568/1851299>
+      if (Jenkins.instance.injector.getInstance(jenkins.security.s2m.AdminWhitelistRule.class).getMasterKillSwitch()) {
+        Jenkins.instance.injector.getInstance(jenkins.security.s2m.AdminWhitelistRule.class).setMasterKillSwitch(false);
+        Jenkins.instance.save()
+        println "Changed agent-master access control: now disabled."
+      }
+
+      // Enable CSRF, as it's strongly recommended.
+      // Reference: <https://wiki.jenkins.io/display/JENKINS/CSRF+Protection>
+      if (Jenkins.instance.getCrumbIssuer() == null ) {
+        Jenkins.instance.setCrumbIssuer(new hudson.security.csrf.DefaultCrumbIssuer(true))
+        Jenkins.instance.save()
+        println "Changed CSRF: enabled."
+      }
+      EOF
+      {{ jenkins_cli_command }} groovy =
+  become: true
+  become_user: jenkins
+  register: shell_jenkins_security
+  changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
+
 # Fire any pending restart handlers now, or else the tests below here may not
 # be valid.
 - meta: flush_handlers
