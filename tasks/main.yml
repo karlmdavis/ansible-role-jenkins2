@@ -3,6 +3,42 @@
 # Install all OS packages (including Jenkins itself).
 - include_tasks: "packages_{{ ansible_os_family }}.yml"
 
+- name: Create Jenkins Home
+  file:
+    path: "{{ jenkins_home }}"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: u=rwx,g=rx,o=rx
+  become: true
+
+# Fire any pending restart handlers now, as we need Jenkins to be running.
+# Otherwise, the config.xml file may not have been created yet.
+- meta: flush_handlers
+
+- name: Read Jenkins Config File
+  slurp:
+    src: "{{ jenkins_home }}/config.xml"
+  become: true
+  changed_when: false
+  register: slurp_jenkins_config
+
+- name: Determine Active Security Settings
+  set_fact:
+    # Yes, I'm parsing XML with a regex, and yes that's bad. But it's almost
+    # certainly "good enough" in this instance, so.
+    jenkins_active_security_realm: "{{ slurp_jenkins_config.content | b64decode | regex_replace('\n', '') | regex_replace('.*<securityRealm class=\"([^\"]+)\".*', '\\1') }}"
+    # Note: this will be a string value; use the `| bool` filter on it if a boolean is needed.
+    jenkins_security_enabled: "{{ true if (slurp_jenkins_config.content | b64decode | regex_replace('\n', '') | regex_replace('.*<useSecurity>([^<].*)</useSecurity>.*', '\\1')) == 'true' else false }}"
+
+- name: Calculate API Connection Variables
+  set_fact:
+    # All communication with the Jenkins API will be done over localhost, for security.
+    jenkins_url_local: "http://localhost:{{ jenkins_port }}{{ jenkins_context_path }}"
+    # The actual username and password used are dynamic to ensure that anon logins are used post-install (before security has been configured).
+    jenkins_dynamic_admin_username: "{{ (jenkins_admin_username | default(None)) if (jenkins_security_enabled | bool) else None }}"
+    jenkins_dynamic_admin_password: "{{ (jenkins_admin_password | default(None)) if (jenkins_security_enabled | bool) else None }}"
+
 - name: Create Jenkins Init Script Directory
   # Reference: https://wiki.jenkins-ci.org/display/JENKINS/Post-initialization+script
   file:
@@ -13,16 +49,15 @@
     mode: 0755
   become: true
 
-# Enable the Jenkins CLI.
-- import_tasks: "cli_config.yml"
-
 # Install and/or update plugins.
 - import_tasks: "plugins.yml"
 
 - name: Configure Jenkins (Miscellaneous Settings)
-  shell:
-    cmd: |
-      cat <<EOF |
+  jenkins_script:
+    url: "{{ jenkins_url_local }}"
+    user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+    password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+    script: |
       // These are the basic imports that the Jenkins interactive script console
       // automatically includes.
       import jenkins.*;
@@ -48,17 +83,15 @@
         locationConfig.save()
         println "Changed external URL"
       }
-      EOF
-      {{ jenkins_cli_command }} groovy =
-  become: true
-  become_user: jenkins
   register: shell_jenkins_config_misc
-  changed_when: "(shell_jenkins_config_misc | success) and 'Changed' in shell_jenkins_config_misc.stdout"
+  changed_when: "(shell_jenkins_config_misc | success) and 'Changed' in shell_jenkins_config_misc.output"
 
 - name: Configure Security Recommendations
-  shell:
-    cmd: |
-      cat <<EOF |
+  jenkins_script:
+    url: "{{ jenkins_url_local }}"
+    user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+    password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+    script: |
       // These are the basic imports that Jenkins interactive script console
       // automatically includes.
       import jenkins.*;
@@ -108,12 +141,8 @@
         Jenkins.instance.save()
         println "Changed CSRF: enabled."
       }
-      EOF
-      {{ jenkins_cli_command }} groovy =
-  become: true
-  become_user: jenkins
   register: shell_jenkins_security_recommendations
-  changed_when: "(shell_jenkins_security_recommendations | success) and 'Changed' in shell_jenkins_security_recommendations.stdout"
+  changed_when: "(shell_jenkins_security_recommendations | success) and 'Changed' in shell_jenkins_security_recommendations.output"
 
 # Fire any pending restart handlers now, or else the tests below here may not
 # be valid.
@@ -139,3 +168,4 @@
 - name: Verify Jenkins Web UI Content
   action: fail
   when: jenkins_ui.content.find('Jenkins ver. 2') == -1
+

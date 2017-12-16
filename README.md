@@ -31,10 +31,14 @@ This role supports the following variables, listed here with their default value
 * `jenkins_url_external`: `''`
     * The external URL that users will use to access Jenkins. Gets set in the Jenkins config and used in emails, webhooks, etc.
     * If this is left empty/None, the configuration will not be set and Jenkins will try to auto-discover this (which won't work correctly if it's proxied).
-    * If you set this, chances are that you'll also need to set jenkins_java_args_extra` to also include `-Dorg.jenkinsci.main.modules.sshd.SSHD.hostName=localhost` in order for the CLI (and this role) to work.
-* `jenkins_admin_users`: `['hudson.security.HudsonPrivateSecurityRealm:admin']`
-    * Override this variable to support an alternative authorization system (i.e.  security realm). Note that this doesn't install/configure that realm, it's just needed to ensure that the Jenkins CLI can still be used once you've activated the realm.
-    * For example, if you're using the [GitHub OAuth plugin](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin)'s security realm, you would add an extra entry such as "`org.jenkinsci.plugins.GithubSecurityRealm:your_github_user_id`" as the first element in this list (and leave the `admin` entry, too).
+* `jenkins_admin_username`: (undefined)
+    * If one of `jenkins_admin_username` and `jenkins_admin_password` are defined, both must be.
+    * Override this variable to specify the Jenkins administrator credentials that should be used for each possible security realm.
+    * If left undefined, the role will attempt to use anonymous authentication.
+    * Note that the role will automatically detect if Jenkins is set to allow anonymous authentication (as is the case right after install) and handle it properly.
+* `jenkins_admin_password`: (undefined)
+    * If one of `jenkins_admin_username` and `jenkins_admin_password` are defined, both must be.
+    * Override this variable to specify the Jenkins administrator credentials that should be used for each possible security realm.
 * `jenkins_plugins_extra`: `[]`
     * Override this variable to install additional Jenkins plugins.
     * These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
@@ -78,20 +82,21 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
     - import_role:
         name: karlmdavis.ansible-jenkins2
       vars:
-        jenkins_admin_users:
-          # Won't be required on first run, but will ensure that tasks using the
-          # CLI function on subsequent playbook executions.
-          - hudson.security.HudsonPrivateSecurityRealm:test
+        # Won't be required on first run, but will be on prior runs (after
+        # security has been enabled, per below).
+        jenkins_admin_username: test
+        jenkins_admin_password: supersecret
 
     # Ensure that Jenkins has restarted, if it needs to.
     - meta: flush_handlers
 
     # Configure security to use Jenkins-local accounts.
     - name: Configure Security
-      shell:
-        # We use a here document to pass in a templated Groovy script.
-        cmd: |
-          cat <<EOF |
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: |
           // These are the basic imports that Jenkin's interactive script console
           // automatically includes.
           import jenkins.*;
@@ -109,7 +114,6 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
             // account can be used with Jenkins' CLI.
             def testUser = securityRealm.createAccount("test", "supersecret")
             testUser.addProperty(new hudson.tasks.Mailer.UserProperty("foo@example.com"));
-            testUser.addProperty(new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl("{{ jenkins_user_ssh_public_key }}"))
             testUser.save()
 
             Jenkins.instance.save()
@@ -125,22 +129,8 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
             Jenkins.instance.save()
             println "Changed authorization."
           }
-          EOF
-          # Note the CLI command here uses an "=" sign as the argument for the
-          # script to be run, which the Jenkins' CLI interprets as a directive
-          # to read the script from STDIN.
-          {{ jenkins_cli_command }} groovy =
-      become: true
-      become_user: jenkins
       register: shell_jenkins_security
       changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
-
-    # This variable has to be updated if later tasks in the same playbook
-    # execution will use the Jenkins CLI.
-    - name: Update Jenkins CLI Command
-      set_fact:
-        jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
-      when: "' -ssh -user test' not in jenkins_cli_command"
 ```
 
 License
