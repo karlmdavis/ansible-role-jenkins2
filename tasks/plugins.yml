@@ -11,6 +11,7 @@
     params:
       url_username: "{{ jenkins_dynamic_admin_username | default(omit) }}"
     url_password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+    validate_certs: "{{ false if ansible_distribution_release == 'trusty' else true }}"
   with_items:
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
@@ -27,6 +28,7 @@
     params:
       url_username: "{{ jenkins_dynamic_admin_username | default(omit) }}"
     url_password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+    validate_certs: "{{ false if ansible_distribution_release == 'trusty' else true }}"
   with_items:
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"

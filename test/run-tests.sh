@@ -12,7 +12,7 @@ set -e
 export ROLE=karlmdavis.jenkins2
 export CONTAINER_PREFIX=ansible_test_jenkins2
 export TEST_PLAY=test_basic.yml
-export PLATFORM=ubuntu_16_04
+export PLATFORM=ubuntu_14_04
 #export PLATFORM=centos_7
 export ANSIBLE_SPEC="ansible"
 

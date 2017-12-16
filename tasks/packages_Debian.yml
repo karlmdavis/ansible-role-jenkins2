@@ -11,8 +11,6 @@
   with_items:
     # Allows use of HTTPS APT repos.
     - apt-transport-https
-    # Seems to be required on Ubuntu 14.04 to access the Jenkins plugins site.
-    - ca-certificates-java
 
 - name: Determine APT Key and Repo to Use (Step 1)
   set_fact:
