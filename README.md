@@ -69,9 +69,9 @@ This role can be applied, as follows:
           - github-oauth
 ```
 
-## Using the Jenkins CLI
+## Running Groovy Scripts to Configure Jenkins
 
-After installing Jenkins, the Jenkins CLI that it installs can also be used to further customize Jenkins.
+After installing Jenkins, Groovy scripts can be run via Ansible to further customize Jenkins.
 
 For example, here's how to install Jenkins and then configure Jenkins to use its `HudsonPrivateSecurityRealm`, for local Jenkins accounts:
 
@@ -133,6 +133,32 @@ For example, here's how to install Jenkins and then configure Jenkins to use its
       changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
 ```
 
+Alternatively, the Groovy scripts can be stored as separate files and pulled in using a `lookup(...)`, as below:
+
+```yaml
+- hosts: some_box
+  tasks:
+
+    - import_role:
+        name: karlmdavis.ansible-jenkins2
+      vars:
+        # Won't be required on first run, but will be on prior runs (after
+        # security has been enabled, per below).
+        jenkins_admin_username: test
+        jenkins_admin_password: supersecret
+
+    # Ensure that Jenkins has restarted, if it needs to.
+    - meta: flush_handlers
+
+    # Configure security to use Jenkins-local accounts.
+    - name: Configure Security
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: "{{ lookup('template', 'templates/jenkins_security.groovy.j2') }}"
+```
+
 License
 -------
 
@@ -146,3 +172,4 @@ Author Information
 ------------------
 
 This plugin was authored by Karl M. Davis (https://justdavis.com/karl/).
+
