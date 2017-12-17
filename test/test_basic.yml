@@ -131,6 +131,17 @@
         password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
         script: |
           println "Hello World!"
-      register: cli_test
+      register: script_test_1
       changed_when: false
-      failed_when: "'Hello World!' not in cli_test.output"
+      failed_when: "'Hello World!' not in script_test_1.output"
+
+    - name: Verify jenkins_script Works with Template Lookup
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: "{{ lookup('template', 'templates/jenkins_hello_world.groovy.j2') }}"
+      register: script_test_2
+      changed_when: false
+      failed_when: "'Hello World!' not in script_test_2.output"
+
