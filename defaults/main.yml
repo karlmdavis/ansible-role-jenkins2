@@ -29,19 +29,6 @@ jenkins_context_path: ''
 # will try to auto-discover this (which won't work correctly if it's proxied).
 jenkins_url_external: ''
 
-# The list of possible Jenkins admin users (and their security realm). At 
-# Jenkins startup, the current security realm will be checked, and the first 
-# user in this list that is found to match that security realm will have their 
-# SSH key set to allow SSH/CLI logins using the primary SSH key of the server's
-# `jenkins` system user account. Any other Jenkins users with that SSH key set 
-# will have it removed, to prevent lookup conflicts.
-# If you're using an alternative authorization system (i.e. security realm),
-# this list will likely need to be modified to include the user ID of one of a
-# valid user from that realm (unless it also happens to have an `admin` 
-# account).
-jenkins_admin_users:
-  - 'hudson.security.HudsonPrivateSecurityRealm:admin'
-
 # The plugins that the Jenkins 2.0 setup wizard installs by default. Currently, 
 # the best place to find this list seems to be in the source, here:
 # https://github.com/jenkinsci/jenkins/blob/master/core/src/main/resources/jenkins/install/platform-plugins.json

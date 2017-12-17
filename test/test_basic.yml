@@ -60,15 +60,19 @@
         jenkins_home: /var/lib/jenkins-not-default
 
         # This test user gets created below.
-        jenkins_admin_users:
-          - hudson.security.HudsonPrivateSecurityRealm:test
+        jenkins_admin_username: test
+        jenkins_admin_password: supersecret
+
     # Ensure that Jenkins has restarted, if it needs to.
     - meta: flush_handlers
+
     # Configure security, so that we can verify that things still work with it.
     - name: Configure Security
-      shell:
-        cmd: |
-          cat <<EOF |
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: |
           // These are the basic imports that Jenkins interactive script console
           // automatically includes.
           import jenkins.*;
@@ -82,7 +86,6 @@
 
             def testUser = securityRealm.createAccount("test", "supersecret")
             testUser.addProperty(new hudson.tasks.Mailer.UserProperty("foo@example.com"));
-            testUser.addProperty(new org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl("{{ jenkins_user_ssh_public_key }}"))
             testUser.save()
 
             Jenkins.instance.save()
@@ -96,16 +99,8 @@
             Jenkins.instance.save()
             println "Changed authorization."
           }
-          EOF
-          {{ jenkins_cli_command }} groovy =
-      become: true
-      become_user: jenkins
       register: shell_jenkins_security
-      changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.stdout"
-    - name: Update Jenkins CLI Command
-      set_fact:
-        jenkins_cli_command: "{{ jenkins_cli_command }} -ssh -user test"
-      when: "' -ssh -user test' not in jenkins_cli_command"
+      changed_when: "(shell_jenkins_security | success) and 'Changed' not in shell_jenkins_security.output"
 
 # Verify that things worked as expected.
 - hosts: docker_container
@@ -129,11 +124,24 @@
       action: fail
       when: jenkins_ui.content.find('Jenkins ver. 2') == -1
 
-    - name: Verify CLI Works with Security
-      # Can't just use jenkins_cli_command here, as it won't be correct if
-      # security was just configured.
-      command: "{{ jenkins_cli_command }} who-am-i"
-      become: true
-      become_user: jenkins
-      register: cli_test
+    - name: Verify jenkins_script Works with Security
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: |
+          println "Hello World!"
+      register: script_test_1
       changed_when: false
+      failed_when: "'Hello World!' not in script_test_1.output"
+
+    - name: Verify jenkins_script Works with Template Lookup
+      jenkins_script:
+        url: "{{ jenkins_url_local }}"
+        user: "{{ jenkins_dynamic_admin_username | default(omit) }}"
+        password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
+        script: "{{ lookup('template', 'templates/jenkins_hello_world.groovy.j2') }}"
+      register: script_test_2
+      changed_when: false
+      failed_when: "'Hello World!' not in script_test_2.output"
+
