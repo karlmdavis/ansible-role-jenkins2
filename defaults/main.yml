@@ -58,6 +58,9 @@ jenkins_plugins_recommended:
 # (must be overridden).
 jenkins_plugins_extra: []
 
+# Timeout when installing/updating plugins (in seconds).
+jenkins_plugins_timeout: 60
+
 # Additional options that will be added to JAVA_ARGS
 jenkins_java_args_extra: ''
 
@@ -72,6 +75,3 @@ jenkins_packages_url_base: 'https://pkg.jenkins.io'
 
 # Set to `true` to add a `proxy: _none_` setting for the YUM repo.
 jenkins_packages_repo_yum_disable_proxy: false
-
-# Timeout when installing the plugin in seconds
-jenkins_plugin_timeout: 60

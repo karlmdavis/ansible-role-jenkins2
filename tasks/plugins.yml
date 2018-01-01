@@ -8,11 +8,11 @@
     state: present
     jenkins_home: "{{ jenkins_home }}"
     url: "{{ jenkins_url_local }}"
-    timeout: "{{ jenkins_plugin_timeout | default(60) }}"
     params:
       url_username: "{{ jenkins_dynamic_admin_username | default(omit) }}"
     url_password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
     validate_certs: "{{ false if ansible_distribution_release == 'trusty' else true }}"
+    timeout: "{{ jenkins_plugins_timeout }}"
   with_items:
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
@@ -26,11 +26,11 @@
     state: latest
     jenkins_home: "{{ jenkins_home }}"
     url: "{{ jenkins_url_local }}"
-    timeout: "{{ jenkins_plugin_timeout | default(60) }}"
     params:
       url_username: "{{ jenkins_dynamic_admin_username | default(omit) }}"
     url_password: "{{ jenkins_dynamic_admin_password | default(omit) }}"
     validate_certs: "{{ false if ansible_distribution_release == 'trusty' else true }}"
+    timeout: "{{ jenkins_plugins_timeout }}"
   with_items:
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
