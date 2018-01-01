@@ -58,6 +58,9 @@ jenkins_plugins_recommended:
 # (must be overridden).
 jenkins_plugins_extra: []
 
+# Timeout when installing/updating plugins (in seconds).
+jenkins_plugins_timeout: 60
+
 # If `true`, the Jenkins plugins will be updated when this role is run.
 # (Note that missing plugins will always be installed.)
 jenkins_plugins_update: true
@@ -76,4 +79,3 @@ jenkins_packages_url_base: 'https://pkg.jenkins.io'
 
 # Set to `true` to add a `proxy: _none_` setting for the YUM repo.
 jenkins_packages_repo_yum_disable_proxy: false
-
