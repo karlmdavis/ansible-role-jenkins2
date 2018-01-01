@@ -33,6 +33,6 @@
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
   become: true
+  when: jenkins_plugins_update
   notify:
     - "Restart Service 'jenkins'"
-

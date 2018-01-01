@@ -42,6 +42,8 @@ This role supports the following variables, listed here with their default value
 * `jenkins_plugins_extra`: `[]`
     * Override this variable to install additional Jenkins plugins.
     * These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
+* `jenkins_plugins_update`: `true`
+    * If `true`, the Jenkins plugins will be updated when this role is run. (Note that missing plugins will always be installed.)
 * `jenkins_java_args_extra`: `''`
     * Additional options that will be added to `JAVA_ARGS` for the Jenkins process, such as the JVM memory settings, e.g. `-Xmx4g`.
 
