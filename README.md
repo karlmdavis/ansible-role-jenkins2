@@ -44,6 +44,8 @@ This role supports the following variables, listed here with their default value
     * These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).
 * `jenkins_plugins_timeout`: `60`
     * The amount of time (in seconds) before a plugin install/update will fail. This value is passed to the timeout parameter in `jenkins_plugin` module. (See here for details: <http://docs.ansible.com/ansible/latest/jenkins_plugin_module.html#options>.)
+* `jenkins_plugins_update`: `true`
+    * If `true`, the Jenkins plugins will be updated when this role is run. (Note that missing plugins will always be installed.)
 * `jenkins_java_args_extra`: `''`
     * Additional options that will be added to `JAVA_ARGS` for the Jenkins process, such as the JVM memory settings, e.g. `-Xmx4g`.
 
