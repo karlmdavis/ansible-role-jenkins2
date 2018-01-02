@@ -20,6 +20,8 @@ This role supports the following variables, listed here with their default value
 * `jenkins_release_line`: `'weekly'`
     * When set to `long_term_support`, the role will install the LTS releases of Jenkins.
     * When set to `weekly`, the role will install the weekly releases of Jenkins.
+* `jenkins_release_update`: `true`
+    * If `true`, the Jenkins package (YUM, APT, etc.) will be upgraded to the latest version when this role is run.
 * `jenkins_home`: `/var/lib/jenkins`
     * The directory that (most of) Jenkins data will be stored.
     * Due to limitations of the Jenkins installer, the `jenkins` service account will still use the default as its home directory. This should really only come into play for SSH keys.
