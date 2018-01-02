@@ -9,6 +9,10 @@
 # backwards compatible with earlier versions of this role.
 jenkins_release_line: 'weekly'
 
+# If `true`, the Jenkins package (YUM, APT, etc.) will be upgraded to the latest
+# version when this role is run.
+jenkins_release_update: true
+
 # The directory that will be used as the home directory for the Jenkins service
 # account. Cannot be modified, due to limitations in the Jenkins installers.
 jenkins_home_default: '/var/lib/jenkins'

@@ -35,7 +35,8 @@
     name: jenkins
     # Setting this to 'latest' is perhaps debatable, but it seems silly not to
     # since this plugin also updates all of the Jenkins plugins automatically.
-    state: latest
+    state: "{{ 'latest' if jenkins_release_update else 'present' }}"
+    update_cache: "{{ true if jenkins_release_update else false }}"
   become: true
 
 - name: Configure Jenkins Launch Settings
