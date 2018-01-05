@@ -77,7 +77,7 @@
       // (Hat tip: http://stackoverflow.com/questions/30355079/jenkins-setting-root-url-via-groovy-api.)
       def externalUrl = "{{ jenkins_url_external | default('') | trim }}" ?: null
       def locationConfig = JenkinsLocationConfiguration.get()
-      println("Configuring Jenkins External URL (current URL: '\${locationConfig.url}')...")
+      println("Configuring Jenkins External URL (current value: '${locationConfig.url}', target value: '${externalUrl}')...")
       if (externalUrl != locationConfig.url) {
         locationConfig.url = externalUrl
         locationConfig.save()
