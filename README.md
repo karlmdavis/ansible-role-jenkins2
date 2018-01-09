@@ -50,6 +50,12 @@ This role supports the following variables, listed here with their default value
     * If `true`, the Jenkins plugins will be updated when this role is run. (Note that missing plugins will always be installed.)
 * `jenkins_java_args_extra`: `''`
     * Additional options that will be added to `JAVA_ARGS` for the Jenkins process, such as the JVM memory settings, e.g. `-Xmx4g`.
+* `jenkins_http_proxy_server`, `jenkins_http_proxy_port`, `jenkins_http_proxy_no_proxy_hosts`: (all undefined)
+    * These server the same function as the JVM's `http.proxyHost`, `http.proxyPort`, and `http.nonProxyHosts` system properties, except that the settings will be used for both HTTP and HTTPS requests.
+    * Specifically, these settings will be used to configure:
+        * The Jenkins JVM's `http.proxyHost`, `http.proxyPort`, `https.proxyHost`, `https.proxyPort`, and `http.nonProxyHosts` system properties, as documented on [Java Networking and Proxies](https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html).
+        * The Jenkins-specific proxy settings (which some plugins, such as the [GitHub plugin](https://wiki.jenkins.io/display/JENKINS/Github+Plugin), require), as documented on [JenkinsBehindProxy](https://wiki.jenkins.io/display/JENKINS/JenkinsBehindProxy).
+        * The value of `jenkins_http_proxy_no_proxy_hosts` should be a list, e.g. `['localhost', 'example.com']`.
 
 Dependencies
 ------------
