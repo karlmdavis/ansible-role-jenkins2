@@ -15,6 +15,11 @@ JAVA_ARGS="-Djava.awt.headless=true"
 # Ansible.
 JAVA_ARGS="${JAVA_ARGS} -Djenkins.install.runSetupWizard=false"
 
+# Specify addition JVM HTTP/HTTPS proxy system properties, if configured by the Ansible role.
+JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_server | default('') | trim) == '' else ' -Dhttp.proxyHost={0} -Dhttps.proxyHost={0}'.format(jenkins_http_proxy_server) }}"
+JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_port | default('') | trim) == '' else ' -Dhttp.proxyPort={0} -Dhttps.proxyPort={0}'.format(jenkins_http_proxy_port) }}"
+JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_no_proxy_hosts | default('') | trim) == '' else ' -Dhttp.nonProxyHosts={}'.format(jenkins_http_proxy_no_proxy_hosts) | join('|') }}"
+
 # Additional args specified by user of Ansible role.
 JAVA_ARGS="${JAVA_ARGS} {{ jenkins_java_args_extra }}"
 

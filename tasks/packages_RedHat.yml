@@ -51,7 +51,7 @@
       # Note: The setup wizard has to be disabled before Jenkins runs the first
       # time. Fortunately, the RHEL packages don't automatically start the
       # Jenkins service after install, so we have time to address this.
-      line: "JENKINS_JAVA_OPTIONS=\"-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false {{ jenkins_java_args_extra }}\""
+      line: "JENKINS_JAVA_OPTIONS=\"-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false {{ '' if (jenkins_http_proxy_server | default('') | trim) == '' else '-Dhttp.proxyHost={0} -Dhttps.proxyHost={0}'.format(jenkins_http_proxy_server) }} {{ '' if (jenkins_http_proxy_port | default('') | trim) == '' else '-Dhttp.proxyPort={0} -Dhttps.proxyPort={0}'.format(jenkins_http_proxy_port) }} {{ '' if (jenkins_http_proxy_no_proxy_hosts | default('') | trim) == '' else '-Dhttp.nonProxyHosts={}'.format(jenkins_http_proxy_no_proxy_hosts | join('|')) }} {{ jenkins_java_args_extra }}\""
     - regexp: '^JENKINS_PORT='
       line: "JENKINS_PORT={{ jenkins_port }}"
     - regexp: '^JENKINS_HOME='
