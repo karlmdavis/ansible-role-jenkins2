@@ -41,6 +41,10 @@ This role supports the following variables, listed here with their default value
 * `jenkins_admin_password`: (undefined)
     * If one of `jenkins_admin_username` and `jenkins_admin_password` are defined, both must be.
     * Override this variable to specify the Jenkins administrator credentials that should be used for each possible security realm.
+* `jenkins_session_timeout`: `30`
+    * The number of minutes before Jenkins sessions timeout, i.e. how long logins are valid for.
+	* Defaults to 30 minutes.
+	* Can be set to `0` to never timeout.
 * `jenkins_plugins_extra`: `[]`
     * Override this variable to install additional Jenkins plugins.
     * These would be in addition to the plugins recommended by Jenkins 2's new setup wizard, which are installed automatically by this role (see `jenkins_plugins_recommended` in [defaults/main.yml](defaults/main.yml)).

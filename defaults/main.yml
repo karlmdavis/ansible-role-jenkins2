@@ -33,6 +33,11 @@ jenkins_context_path: ''
 # will try to auto-discover this (which won't work correctly if it's proxied).
 jenkins_url_external: ''
 
+# The number of minutes before Jenkins sessions timeout, i.e. how long logins
+# are valid for. Defaults to 30 minutes. Can be set to `0` to never timeout.
+# Reference: <https://stackoverflow.com/a/31809977/1851299>
+jenkins_session_timeout: '30'
+
 # The plugins that the Jenkins 2.0 setup wizard installs by default. Currently, 
 # the best place to find this list seems to be in the source, here:
 # https://github.com/jenkinsci/jenkins/blob/master/core/src/main/resources/jenkins/install/platform-plugins.json
