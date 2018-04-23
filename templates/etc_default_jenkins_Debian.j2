@@ -20,6 +20,9 @@ JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_server | default('') | trim)
 JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_port | default('') | trim) == '' else ' -Dhttp.proxyPort={0} -Dhttps.proxyPort={0}'.format(jenkins_http_proxy_port) }}"
 JAVA_ARGS="${JAVA_ARGS}{{ '' if (jenkins_http_proxy_no_proxy_hosts | default('') | trim) == '' else ' -Dhttp.nonProxyHosts={}'.format(jenkins_http_proxy_no_proxy_hosts) | join('|') }}"
 
+# Set the session/login timeout.
+JAVA_ARGS="${JAVA_ARGS} -DsessionTimeout={{ jenkins_session_timeout }}"
+
 # Additional args specified by user of Ansible role.
 JAVA_ARGS="${JAVA_ARGS} {{ jenkins_java_args_extra }}"
 
