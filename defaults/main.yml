@@ -70,6 +70,9 @@ jenkins_plugins_extra: []
 # Timeout when installing/updating plugins (in seconds).
 jenkins_plugins_timeout: 60
 
+# How many times to retry failed plugin installs/upgrades.
+jenkins_plugins_retries: 3
+
 # If `true`, the Jenkins plugins will be updated when this role is run.
 # (Note that missing plugins will always be installed.)
 jenkins_plugins_update: true

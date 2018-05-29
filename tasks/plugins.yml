@@ -16,6 +16,7 @@
     - "{{ jenkins_plugins_recommended }}"
     - "{{ jenkins_plugins_extra }}"
   become: true
+  retries: "{{ jenkins_plugins_retries }}"
   notify:
     - "Restart Service 'jenkins'"
 
@@ -34,5 +35,6 @@
     - "{{ jenkins_plugins_extra }}"
   become: true
   when: jenkins_plugins_update
+  retries: "{{ jenkins_plugins_retries }}"
   notify:
     - "Restart Service 'jenkins'"
