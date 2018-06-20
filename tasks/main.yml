@@ -190,5 +190,5 @@
 
 - name: Verify Jenkins Web UI Content
   action: fail
-  when: jenkins_ui.content.find('Jenkins ver. 2') == -1
+  when: jenkins_ui.content.find('Jenkins') == -1
 
