@@ -188,7 +188,8 @@
     no_proxy: localhost
   register: jenkins_ui
 
+- debug:
+    var: jenkins_ui
 - name: Verify Jenkins Web UI Content
   action: fail
   when: jenkins_ui.content.find('Jenkins') == -1
-

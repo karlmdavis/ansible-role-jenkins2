@@ -16,7 +16,7 @@ source venv/bin/activate
 ansible-playbook $TEST_PLAY --inventory=inventory --syntax-check
 
 # Run the Ansible test case.
-ansible-playbook $TEST_PLAY --inventory=inventory
+ansible-playbook $TEST_PLAY --inventory=inventory -vvvv
 
 # Run the role/playbook again, checking to make sure it's idempotent.
 ansible-playbook $TEST_PLAY --inventory=inventory \
