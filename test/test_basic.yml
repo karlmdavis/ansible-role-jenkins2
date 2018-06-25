@@ -118,7 +118,7 @@
     
     - name: Verify Jenkins Web UI Content
       action: fail
-      when: jenkins_ui.content.find('Jenkins ver. 2') == -1
+      when: "'Jenkins' not in jenkins_ui.content"
 
     - name: Verify jenkins_script Works with Security
       jenkins_script:
@@ -140,4 +140,3 @@
       register: script_test_2
       changed_when: false
       failed_when: "'Hello World!' not in script_test_2.output"
-

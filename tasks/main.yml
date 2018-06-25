@@ -194,4 +194,4 @@
 
 - name: Verify Jenkins Web UI Content
   action: fail
-  when: jenkins_ui.content.find('Jenkins') == -1
+  when: "'Jenkins' not in jenkins_ui.content"
