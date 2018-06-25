@@ -188,10 +188,6 @@
     no_proxy: localhost
   register: jenkins_ui
 
-- name: Debug Jenkins UI Content
-  debug:
-    var: jenkins_ui
-
 - name: Verify Jenkins Web UI Content
   action: fail
   when: "'Jenkins' not in jenkins_ui.content"
