@@ -18,7 +18,7 @@ fi
 
 # Create and activate the Python virtualenv needed by Ansible.
 if [[ ! -d venv/ ]]; then
-  virtualenv -p /usr/bin/python2.7 venv
+  virtualenv -p $(which python2) venv
 fi
 source venv/bin/activate
 
