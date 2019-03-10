@@ -122,14 +122,6 @@
       import hudson.*;
       import hudson.model.*;
 
-      // Disable CLI remoting, as its insecure and Jenkins yells about it.
-      // Reference: <://support.cloudbees.com/hc/en-us/articles/234709648-Disable-Jenkins-CLI>
-      if (Jenkins.instance.getDescriptor("jenkins.CLI").get().isEnabled()) {
-        Jenkins.instance.getDescriptor("jenkins.CLI").get().setEnabled(false)
-        Jenkins.instance.save()
-        println "Changed CLI remoting: now disabled."
-      }
-
       // Disable deprecated agent protocols.
       // Reference: <https://github.com/jenkinsci/jenkins/commit/efdd52e9e78cc057ea49a7d338ee575d131c1959>
       def agentProtocolWasDisabled = false
